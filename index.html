@@ -62,19 +62,23 @@
       border-left: 5px solid #2575fc;
     }
 
-    .command:hover {
-      transform: scale(1.02);
-    }
-
     .command h3 {
       margin: 0;
       font-size: 1.2rem;
       color: #ffffff;
     }
 
+    .command.light-theme h3 {
+      color: #333333; /* Тёмный текст в светлой теме */
+    }
+
     .command p {
       margin: 0.5rem 0 0;
       color: #cccccc;
+    }
+
+    .command.light-theme p {
+      color: #333333; /* Тёмный текст в светлой теме */
     }
 
     .stream-section {
@@ -164,7 +168,7 @@
 <body>
 
   <header>
-    <h1>🎵 frecklesmusic</h1>
+    <h1>🎵 Музыкальные Стримы</h1>
     <p>Интерактивные команды для чата</p>
   </header>
 
@@ -234,7 +238,7 @@
   </div>
 
   <footer>
-    © 2025 frecklesmusic | Все команды активны во время стрима
+    © 2025 by Твой Никнейм | Все команды активны во время стрима
   </footer>
 
   <script>
