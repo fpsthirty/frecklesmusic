@@ -3,216 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Команды чата — Музыкальный Стрим</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #1c1c1c;
-      color: #f5f5f5;
-      line-height: 1.6;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    body.light-theme {
-      background-color: #ffffff;
-      color: #333333;
-    }
-
-    header {
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      padding: 2rem;
-      text-align: center;
-      color: #fff;
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-
-    header p {
-      margin: 0.5rem 0 0;
-      font-size: 1.2rem;
-      color: #e0e0e0;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
-
-    .command-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .command {
-      background: #2a2a2a;
-      border-left: 5px solid #6a11cb;
-      padding: 1rem;
-      border-radius: 8px;
-      transition: transform 0.2s ease;
-    }
-
-    .command.light-theme {
-      background: #f5f5f5;
-      border-left: 5px solid #2575fc;
-    }
-
-    .command h3 {
-      margin: 0;
-      font-size: 1.2rem;
-      color: #ffffff;
-    }
-
-    .command.light-theme h3 {
-      color: #333333; /* Тёмный текст в светлой теме */
-    }
-
-    .command p {
-      margin: 0.5rem 0 0;
-      color: #cccccc;
-    }
-
-    .command.light-theme p {
-      color: #333333; /* Тёмный текст в светлой теме */
-    }
-
-    .stream-section {
-      margin-top: 3rem;
-    }
-
-    .stream-section h2 {
-      text-align: center;
-      font-size: 1.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .stream-embed {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-
-    iframe {
-      width: 100%;
-      height: 450px;
-      border: none;
-      border-radius: 8px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.9rem;
-      color: #777;
-    }
-
-    footer.light-theme {
-      color: #333;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: #2575fc;
-      color: white;
-      padding: 0.5rem 1rem;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: background 0.3s;
-    }
-
-    .theme-toggle:hover {
-      background: #6a11cb;
-    }
-
-    .open-stream-btn {
-      display: inline-block;
-      margin-top: 1rem;
-      padding: 0.8rem 1.5rem;
-      background-color: #2575fc;
-      color: white;
-      border-radius: 5px;
-      text-align: center;
-      font-size: 1rem;
-      text-decoration: none;
-      transition: background-color 0.3s;
-    }
-
-    .open-stream-btn:hover {
-      background-color: #6a11cb;
-    }
-
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 2rem;
-      }
-
-      .command h3 {
-        font-size: 1rem;
-      }
-
-      iframe {
-        height: 250px;
-      }
-    }
-  </style>
+  <title>🎵 frecklesmusic — команды чата </title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
   <header>
-    <h1>🎵 Музыкальные Стримы</h1>
-    <p>Интерактивные команды для чата</p>
+    <h1>🎵 frecklesmusic</h1>
+    <p>Интерактивные команды для чата — кликай для копирования</p>
   </header>
 
-  <button class="theme-toggle" onclick="toggleTheme()">🌙 / 🌞 Тёмная / Светлая тема</button>
+  <button class="theme-toggle" onclick="toggleTheme()">🌞 Светлая тема</button>
 
-  <div class="container">
+  <div class="content-general">
     <div class="command-list">
 
-      <div class="command">
-        <h3>!cam1 🎥</h3>
-        <p>Переключить на основную камеру</p>
-      </div>
-
-      <div class="command">
-        <h3>!cam2 🎹</h3>
-        <p>Вид с клавиш — идеально для музыкальных моментов</p>
-      </div>
-
-      <div class="command">
-        <h3>!glitch 👾</h3>
-        <p>Добавляет глитч-эффект на видео</p>
-      </div>
-
-      <div class="command">
-        <h3>!party 🪩</h3>
-        <p>Включает диско-режим с цветными огнями</p>
-      </div>
-
-      <div class="command">
-        <h3>!vhs 📼</h3>
-        <p>Старый VHS-фильтр — ностальгия</p>
-      </div>
-
-      <div class="command">
-        <h3>!cat 😺</h3>
-        <p>Появляется рандомный котик на экране</p>
-      </div>
-
-      <div class="command">
-        <h3>!rip 💀</h3>
-        <p>Шутливый "game over" эффект с шумом</p>
-      </div>
+    <!-- --------------------------------------------
+      здесь будут сгенерированные блоки с чат-командами
+    --------------------------------------------- -->
 
     </div>
+    
+    <div class="toast" id="toast">Скопировано в буфер обмена!</div>
 
     <div class="stream-section">
       <h2>🔴 Прямые трансляции</h2>
@@ -238,24 +49,31 @@
   </div>
 
   <footer>
-    © 2025 by Твой Никнейм | Все команды активны во время стрима
+    © 2025 by fpsthirty + ИИ | Все команды активны во время стрима
   </footer>
 
-  <script>
-    // Функция для переключения темы
+  <script> // переключение светлой / тёмной темы
     function toggleTheme() {
       const body = document.body;
       const commands = document.querySelectorAll('.command');
       const footer = document.querySelector('footer');
+      const themeToggleButton = document.querySelector('.theme-toggle');
 
       body.classList.toggle('light-theme');
       footer.classList.toggle('light-theme');
-
       commands.forEach(command => {
         command.classList.toggle('light-theme');
       });
+
+      // Обновляем текст кнопки в зависимости от темы
+      if (body.classList.contains('light-theme')) {
+        themeToggleButton.textContent = "🌙 Тёмная тема";
+      } else {
+        themeToggleButton.textContent = "🌞 Светлая тема";
+      }
     }
   </script>
 
+  <script src="commands.js"></script>
 </body>
 </html>
