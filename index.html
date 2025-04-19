@@ -1,79 +1,99 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>🎵 frecklesmusic — команды чата </title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <header>
-    <h1>🎵 frecklesmusic</h1>
-    <p>Интерактивные команды для чата — кликай для копирования</p>
-  </header>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🎵 frecklesmusic — команды чата </title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <link rel="icon" href="images/favicon/favicon.ico" type="image/x-icon">
+    <link rel="icon" sizes="16x16" href="images/favicon/favicon-16x16.png?v=">
+    <link rel="icon" sizes="32x32" href="images/favicon/favicon-32x32.png?v=">
+    <link rel="icon" sizes="192x192" href="images/favicon/android-chrome-192x192.png?v=">
+    <link rel="apple-touch-icon" sizes="180x180" href="images/favicon/apple-touch-icon.png?v=">
+    <link rel="icon" sizes="512x512" href="images/favicon/android-chrome-512x512.png?v=">
+  </head>
+  <body>
+    <header>
+      <h1>🎵 frecklesmusic</h1>
+      <p>Интерактивные команды для чата — кликай для копирования</p>
+    </header>
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span class="theme-text">🌞 Светлая тема</span>
+      <!--<span class="close-btn" onclick="hideThemeButton(event)">×</span> -->
+    </button>
+    <div class="content-general">
+      <div class="command-list">
 
-  <button class="theme-toggle" onclick="toggleTheme()">🌞 Светлая тема</button>
+      <!-- --------------------------------------------
+        здесь будут сгенерированные блоки с чат-командами
+      --------------------------------------------- -->
 
-  <div class="content-general">
-    <div class="command-list">
+      </div>    
+      <div class="toast" id="toast">Скопировано в буфер обмена!</div>
 
-    <!-- --------------------------------------------
-      здесь будут сгенерированные блоки с чат-командами
-    --------------------------------------------- -->
+      <div class="stream-section">
+        <h2>📺 Прямые трансляции</h2>
+        <!-- Общий контейнер для всех ссылок -->
+        <div class="stream-links">
+          
+          <!-- Ссылка на Twitch -->
+          <a href="https://www.twitch.tv/frecklesmusic" class="stream-link twitch" target="_blank">
+            <div class="platform-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png" alt="Twitch">
+            </div>
+            <div class="stream-info">
+              <h3>Twitch</h3>
+              <p>frecklesmusic</p>
+            </div>
+          </a>
 
-    </div>
-    
-    <div class="toast" id="toast">Скопировано в буфер обмена!</div>
+          <!-- Ссылка на YouTube -->
+          <a href="https://www.youtube.com/@DashaRepina/live" class="stream-link youtube" target="_blank">
+            <div class="platform-icon">
+              <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
+            </div>
+            <div class="stream-info">
+              <h3>YouTube</h3>
+              <p>Dasha Repina</p>
+            </div>
+          </a>
 
-    <div class="stream-section">
-      <h2>🔴 Прямые трансляции</h2>
-      <div class="stream-embed">
+          <!-- Ссылка на GoodGame -->
+          <a href="https://goodgame.ru/frecklesx" class="stream-link goodgame" target="_blank">
+            <div class="platform-icon">
+              <img src="https://static.goodgame.ru/images/svg/new-logo.svg" alt="GoodGame">
+            </div>
+            <div class="stream-info">
+              <h3>GoodGame</h3>
+              <p>frecklesx</p>
+            </div>
+          </a>
 
-        <!-- Twitch Embed -->
-        <iframe 
-          src="https://player.twitch.tv/?channel=frecklesmusic&parent=github.io" 
-          allowfullscreen>
-        </iframe>
-        <a class="open-stream-btn" href="https://www.twitch.tv/frecklesmusic" target="_blank">Открыть в новом окне</a>
-
-        <!-- YouTube Embed -->
-        <iframe 
-          src="https://www.youtube.com/embed/live_stream?channel=UCzPbqzFo7k9oZoXM3lLAVlw" 
-          allowfullscreen>
-        </iframe>
-        <a class="open-stream-btn" href="https://www.youtube.com/@DashaRepina/live" target="_blank">Открыть в новом окне</a>
-
+            <!-- Ссылка на VK video -->
+          <a href="https://live.vkvideo.ru/frecklesmusic" class="stream-link vk" target="_blank">
+            <div class="platform-icon">
+                <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M0 15.36C0 8.12 0 4.499 2.25 2.25S8.12 0 15.36 0h1.28c7.24 0 10.861 0 13.11 2.25S32 8.12 32 15.36v1.28c0 7.24 0 10.861-2.25 13.11S23.88 32 16.64 32h-1.28c-7.24 0-10.861 0-13.11-2.25S0 23.88 0 16.64z" fill="#07f"/>
+                  <path d="M17.092 23.333c-7.22 0-11.6-5.009-11.772-13.333h3.657c.114 6.115 2.895 8.706 5.028 9.239V10h3.504v5.277c2.057-.228 4.21-2.628 4.934-5.277h3.45c-.553 3.257-2.897 5.657-4.553 6.647 1.658.801 4.324 2.896 5.353 6.686h-3.791c-.8-2.533-2.762-4.495-5.391-4.762v4.762z" fill="#fff"/>
+                </svg>
+            </div>
+            <div class="stream-info">
+              <h3>Вконтакте</h3>
+              <p>frecklesmusic</p>
+            </div>
+          </a>
+        </div>
       </div>
-    </div>
+    <footer>
+      © 2025 by fpsthirty + ИИ | Все команды активны во время стрима
+    </footer>
 
-  </div>
+    <script src="scripts/commands.js"></script>
+    <script src="scripts/theme-toggle.js"></script>
+    <script>
+      
 
-  <footer>
-    © 2025 by fpsthirty + ИИ | Все команды активны во время стрима
-  </footer>
+    </script>
 
-  <script> // переключение светлой / тёмной темы
-    function toggleTheme() {
-      const body = document.body;
-      const commands = document.querySelectorAll('.command');
-      const footer = document.querySelector('footer');
-      const themeToggleButton = document.querySelector('.theme-toggle');
-
-      body.classList.toggle('light-theme');
-      footer.classList.toggle('light-theme');
-      commands.forEach(command => {
-        command.classList.toggle('light-theme');
-      });
-
-      // Обновляем текст кнопки в зависимости от темы
-      if (body.classList.contains('light-theme')) {
-        themeToggleButton.textContent = "🌙 Тёмная тема";
-      } else {
-        themeToggleButton.textContent = "🌞 Светлая тема";
-      }
-    }
-  </script>
-
-  <script src="commands.js"></script>
-</body>
+  </body>
 </html>

@@ -1,0 +1,386 @@
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #1c1c1c;
+  color: #f5f5f5;
+  line-height: 1.6;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.light-theme {
+  background-color: #ebebeb;
+  color: #333333;
+}
+
+header {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 50%, #6a11cb 100%);
+  background-size: 200% 200%;
+  padding: 2rem;
+  text-align: center;
+  color: #fff;
+  animation: gradientMove 20s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+header p {
+  margin: 0.5rem 0 0;
+  font-size: 1.2rem;
+  color: #e0e0e0;
+}
+
+.content-general {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+.command-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.command {
+  background: #2a2a2a;
+  border-left: 5px solid #6a11cb;
+  padding: 1rem;
+  border-radius: 8px;
+  transition: box-shadow 0.3s ease; /* Плавный переход для подсветки */
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/*.command.animate .copy-icon {
+  transform: scale(1.5) rotate(15deg); 
+}*/
+
+.command.light-theme {
+  background: #dddddd;
+  border-left: 5px solid #2575fc;
+}
+
+.command:hover {
+  box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Освещаем блок в тёмной теме */
+}
+
+.command.light-theme:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Затемняем блок в светлой теме */
+}
+
+.command h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.command.light-theme h3 {
+  color: #333333; /* Тёмный текст в светлой теме */
+}
+
+.command p {
+  margin: 0.5rem 0 0;
+  color: #cccccc;
+}
+
+.command.light-theme p {
+  color: #333333; /* Тёмный текст в светлой теме */
+}
+
+.stream-section {
+  margin-top: 3rem;
+}
+
+.stream-section h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.stream-embed {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Иконка копирования */
+.copy-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #fff;
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+
+/* Подсветка иконки при наведении */
+.command:hover .copy-icon {
+  color: #6a11cb;
+}
+
+/* Уведомление */
+.toast {
+  z-index: 1000;
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 1rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.toast.show {
+  display: block;
+  opacity: 1;
+}
+
+/* Анимация для уведомления */
+.show-toast {
+  display: block;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+iframe {
+  width: 100%;
+  height: 450px;
+  border: none;
+  border-radius: 8px;
+}
+
+footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  font-size: 0.9rem;
+  color: #777;
+}
+
+footer.light-theme {
+  color: #333;
+}
+
+.theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: rgba(37, 117, 252, 0.2);
+  color: white;
+  padding: 0.5rem 1rem;
+  padding-right: 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.3s;
+  width: 180px;
+  text-align: center;
+}
+
+.theme-toggle:hover {
+  background: rgba(106, 17, 203, 0.5);
+}
+
+/*
+.close-btn {
+  position: absolute;
+  right: 2px;
+  top: 1.25rem;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  opacity: 0; 
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover .close-btn {
+  right: 5px;
+  opacity: 1;
+}
+*/
+.open-stream-btn {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background-color: #2575fc;
+  color: white;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.open-stream-btn:hover {
+  background-color: #6a11cb;
+}
+
+@media (max-width: 600px) {
+  .theme-toggle {
+    top: 0;
+    right: 0;
+    padding: 0.5rem;
+    border: none;
+    background-color: transparent;
+    padding: 8px; /* Делаем кнопку квадратной */
+    width: 40px; /* Фиксированная ширина */
+    text-align: center;
+  }
+
+  .theme-toggle span {
+    display: none;
+  }
+
+  .theme-toggle:hover {
+    background: transparent;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .command h3 {
+    font-size: 1rem;
+  }
+
+  iframe {
+    height: 250px;
+  }
+
+  .command-list {
+    grid-template-columns: 1fr; /* Один столбец для мобильных устройств */
+  }
+
+  .toast {
+    top: 80%;
+  }
+}
+
+  /* Планшетная версия: два столбца */
+  @media (min-width: 600px) and (max-width: 1024px) {
+    .command-list {
+      grid-template-columns: repeat(2, 1fr); /* Два столбца для планшетов */
+    }
+  }
+
+  /* ПК версия: три столбца */
+  @media (min-width: 1024px) {
+    .command-list {
+      grid-template-columns: repeat(3, 1fr); /* Три столбца для ПК */
+    }
+  }
+}
+
+/* --------------- stream section --------------- */
+
+.stream-section {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+/* Общие стили контейнера */
+.stream-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Стили каждой ссылки */
+.stream-link {
+  display: flex;
+  align-items: center;
+  width: 250px;
+  padding: 15px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.3s, box-shadow 0.3s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Эффект при наведении */
+.stream-link:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Цвета платформ */
+.twitch { 
+  background: #6a11cb;
+}
+.youtube { 
+  background: #781b1b; 
+}
+.goodgame { 
+  background: #0c1220; 
+}
+
+.vk { 
+  background: #0277ff; 
+}
+
+
+
+/* Стили иконок */
+.platform-icon img, svg {
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+}
+
+/* Стили текста */
+.stream-info h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.stream-info p {
+  margin: 5px 0 0;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+/* Адаптив для мобилок */
+@media (max-width: 768px) {
+  .stream-link { 
+    width: 100%; 
+  }
+}

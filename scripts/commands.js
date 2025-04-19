@@ -3,7 +3,7 @@
 // ----------------------
 
 // Массив команд
-const commandList = [
+const commands = [
   {
     command: "!cam1 🎥",
     description: "Переключить на основную камеру",
@@ -11,15 +11,13 @@ const commandList = [
   {
     command: "!cam2 🎹",
     description: "Вид с клавиш — идеально для музыкальных моментов",
-
   },
   {
     command: "!glitch 👾",
     description: "Добавляет глитч-эффект на видео",
   },
   {
-    command: "!party 🪩",
-    description: "Включает диско-режим с цветными огнями",
+    command: "!party",
   },
   {
     command: "!vhs 📼",
@@ -31,7 +29,6 @@ const commandList = [
   },
   {
     command: "!rip 💀",
-    description: "Шутливый 'game over' эффект с шумом",
   },
 ];
 
@@ -40,40 +37,56 @@ const commandList = [
 // ----------------------
 
 // генерация HTML-блоков с командами
-function generateCommandBlocks(commandList) {
+function generateCommandBlocks(commands) {
   const commandList = document.querySelector(".command-list");
   commandList.innerHTML = "";
 
-  commandList.forEach((cmd) => {
+  commands.forEach((cmd) => {
+    // Обрабатываем оба варианта: строку и объект
+    const commandText = typeof cmd === 'string' ? cmd : cmd.command;
+    const description = typeof cmd === 'string' ? '' : cmd.description || '';
+
     const block = document.createElement("div");
     block.className = "command";
     
-    block.innerHTML = `
-      <button class="copy-icon">🗎</button>
-      <h3>${cmd.command}</h3>
-      <p>${cmd.description}</p>
+    const icon = document.createElement("button");
+    icon.className = "copy-icon";
+    icon.innerHTML = "🗎";
+    
+    block.appendChild(icon);
+    block.innerHTML += `
+      <h3>${commandText}</h3>
+      ${description ? `<p>${description}</p>` : ''}
     `;
 
-    // Обработчик клика
     block.addEventListener("click", function() {
-      // Анимация фона
-      this.style.transition = "background-color 1s ease";
-      this.style.backgroundColor = "#880000";
-      
-      // Возвращаем исходный цвет через 1 секунду
-      setTimeout(() => {
-        this.style.backgroundColor = "";
-      }, 1000);
-      
-      // Копирование текста
-      copyToClipboard(cmd.command.split(" ")[0]);
+      animateIcon(icon);
+      animateBackground(this);
+      copyToClipboard(commandText.split(" ")[0]);
     });
 
     commandList.appendChild(block);
   });
 }
 
-// копирование команды в буфер обмена
+// анимации иконки в блоке команды
+function animateIcon(iconElement) {
+  iconElement.style.transform = "scale(1.3)";
+  setTimeout(() => {
+    iconElement.style.transform = "";
+  }, 300);
+}
+
+// анимация фона для блока команды
+function animateBackground(element) {
+  element.style.transition = "background-color 0.3s ease";
+  element.style.backgroundColor = "#888888";
+  setTimeout(() => {
+    element.style.backgroundColor = "";
+  }, 300);
+}
+
+// копирование в буфер обмена
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(() => {
     const toast = document.getElementById("toast");
@@ -91,5 +104,5 @@ function copyToClipboard(text) {
 
 // Запускаем генерацию при загрузке страницы
 document.addEventListener("DOMContentLoaded", () => {
-  generateCommandBlocks(commandList);
+  generateCommandBlocks(commands);
 });
