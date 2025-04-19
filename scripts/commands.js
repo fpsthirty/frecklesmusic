@@ -51,7 +51,7 @@ function generateCommandBlocks(commands) {
     
     const icon = document.createElement("button");
     icon.className = "copy-icon";
-    icon.innerHTML = "🗎";
+    icon.innerHTML = ""; // не нравятся универсальные иконки, решил вовсе удалить
     
     block.appendChild(icon);
     block.innerHTML += `

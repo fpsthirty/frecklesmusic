@@ -130,7 +130,7 @@ header p {
   right: 10px;
   background: none;
   border: none;
-  font-size: 1.5rem;
+  font-size: 1rem;
   cursor: pointer;
   color: #fff;
   transition: color 0.3s ease;
@@ -314,6 +314,11 @@ footer.light-theme {
   gap: 1rem;
 }
 
+.icon-tv {
+  position: relative;
+  top: -3px;
+}
+
 /* Общие стили контейнера */
 .stream-links {
   display: flex;
@@ -356,8 +361,6 @@ footer.light-theme {
 .vk { 
   background: #0277ff; 
 }
-
-
 
 /* Стили иконок */
 .platform-icon img, svg {
