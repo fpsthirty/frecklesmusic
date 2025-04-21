@@ -220,9 +220,14 @@ footer.light-theme {
   border-radius: 5px;
   cursor: pointer;
   font-size: 1rem;
-  transition: background 0.3s;
+  transition:
+    background 0.3s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease;
   width: 180px;
   text-align: center;
+  opacity: 1;
+  transform: none;
 }
 
 .theme-toggle:hover {
@@ -269,7 +274,7 @@ footer.light-theme {
   background-color: #6a11cb;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
   .theme-toggle {
     top: 0;
     right: 0;
@@ -279,6 +284,8 @@ footer.light-theme {
     padding: 8px; /* Делаем кнопку квадратной */
     width: 40px; /* Фиксированная ширина */
     text-align: center;
+    display: block !important;
+    opacity: 1 !important;
   }
 
   .theme-toggle span {
@@ -311,10 +318,15 @@ footer.light-theme {
 }
 
   /* Планшетная версия: два столбца */
-  @media (min-width: 600px) and (max-width: 1024px) {
+  @media (min-width: 768px) and (max-width: 1024px) {
     .command-list {
       grid-template-columns: repeat(2, 1fr); /* Два столбца для планшетов */
     }
+  }
+
+  /* Стили для планшетов и десктопов */
+  @media (min-width: 768px) {
+
   }
 
   /* ПК версия: три столбца */
@@ -322,14 +334,24 @@ footer.light-theme {
     .command-list {
       grid-template-columns: repeat(3, 1fr); /* Три столбца для ПК */
     }
+    
+    .theme-toggle {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .theme-toggle.visible,
+    header:hover ~ .theme-toggle {
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
-}
 
 /* --------------- stream section --------------- */
 
 .stream-section {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   gap: 1rem;
 }
 

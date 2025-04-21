@@ -68,3 +68,66 @@ window.addEventListener('resize', function() {
 document.addEventListener('DOMContentLoaded', function() {
   applySavedTheme();
 });
+
+/* десктоп: скрытие кнопки спустя 10сек после захода до тех пор, пока пользователь не наведёт курсор на хеадер */
+
+document.addEventListener('DOMContentLoaded', function() {
+  const themeToggle = document.querySelector('.theme-toggle');
+  const header = document.querySelector('header');
+  const isDesktop = window.innerWidth >= 1024;
+  const INITIAL_DELAY = 1000; // 10 секунд
+
+  let initialTimer;
+  let isInitialPeriod = true;
+
+  function showButton() {
+    themeToggle.classList.add('visible');
+  }
+
+  function hideButton() {
+    if (!isHovered() && !isInitialPeriod) {
+      themeToggle.classList.remove('visible');
+    }
+  }
+
+  function isHovered() {
+    return header.matches(':hover') || themeToggle.matches(':hover');
+  }
+
+  // Только для планшетов и десктопов
+  if (isDesktop) {
+    showButton();
+
+    initialTimer = setTimeout(function() {
+      isInitialPeriod = false;
+      hideButton();
+    }, INITIAL_DELAY);
+
+    // Обработчики для header
+    header.addEventListener('mouseenter', showButton);
+    header.addEventListener('mouseleave', hideButton);
+
+    // Обработчики для самой кнопки
+    themeToggle.addEventListener('mouseenter', showButton);
+    themeToggle.addEventListener('mouseleave', function() {
+      if (!isInitialPeriod && !header.matches(':hover')) {
+        hideButton();
+      }
+    });
+  }
+
+  // Реакция на ресайз
+  window.addEventListener('resize', function() {
+    if (window.innerWidth < 1024) {
+      clearTimeout(initialTimer);
+      showButton();
+    } else if (window.innerWidth >= 1024 && !initialTimer) {
+      isInitialPeriod = true;
+      showButton();
+      initialTimer = setTimeout(function() {
+        isInitialPeriod = false;
+        hideButton();
+      }, INITIAL_DELAY);
+    }
+  });
+});
