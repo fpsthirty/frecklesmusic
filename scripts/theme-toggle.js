@@ -68,11 +68,3 @@ window.addEventListener('resize', function() {
 document.addEventListener('DOMContentLoaded', function() {
   applySavedTheme();
 });
-
-// Обработчик изменения размера окна
-window.addEventListener('resize', updateMobileIcon);
-
-// Инициализация при загрузке
-document.addEventListener('DOMContentLoaded', function() {
-  updateMobileIcon();
-});

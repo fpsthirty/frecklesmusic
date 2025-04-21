@@ -30,6 +30,60 @@ const commands = [
   {
     command: "!rip 💀",
   },
+
+    {
+    command: "!cam1 🎥",
+    description: "Переключить на основную камеру",
+  },
+  {
+    command: "!cam2 🎹",
+    description: "Вид с клавиш — идеально для музыкальных моментов",
+  },
+  {
+    command: "!glitch 👾",
+    description: "Добавляет глитч-эффект на видео",
+  },
+  {
+    command: "!party",
+  },
+  {
+    command: "!vhs 📼",
+    description: "Старый VHS-фильтр — ностальгия",
+  },
+  {
+    command: "!cat 😺",
+    description: "Появляется рандомный котик на экране",
+  },
+  {
+    command: "!rip 💀",
+  },
+
+    {
+    command: "!cam1 🎥",
+    description: "Переключить на основную камеру",
+  },
+  {
+    command: "!cam2 🎹",
+    description: "Вид с клавиш — идеально для музыкальных моментов",
+  },
+  {
+    command: "!glitch 👾",
+    description: "Добавляет глитч-эффект на видео",
+  },
+  {
+    command: "!party",
+  },
+  {
+    command: "!vhs 📼",
+    description: "Старый VHS-фильтр — ностальгия",
+  },
+  {
+    command: "!cat 😺",
+    description: "Появляется рандомный котик на экране",
+  },
+  {
+    command: "!rip 💀",
+  },
 ];
 
 // ----------------------
@@ -79,7 +133,6 @@ function animateIcon(iconElement) {
 
 // анимация фона для блока команды
 function animateBackground(element) {
-  element.style.transition = "background-color 0.3s ease";
   element.style.backgroundColor = "#888888";
   setTimeout(() => {
     element.style.backgroundColor = "";

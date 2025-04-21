@@ -23,6 +23,21 @@ header {
   text-align: center;
   color: #fff;
   animation: gradientMove 20s ease infinite;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1;
+}
+
+:root {
+  --scroll-parallax: 0;
+}
+
+.parallax-content {
+  transform: translateY(calc(var(--scroll-parallax) * 0.3px));
+  opacity: calc(1 - var(--scroll-parallax) / 300);
 }
 
 @keyframes gradientMove {
@@ -65,10 +80,12 @@ header p {
   border-left: 5px solid #6a11cb;
   padding: 1rem;
   border-radius: 8px;
-  transition: box-shadow 0.3s ease; /* Плавный переход для подсветки */
   position: relative;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  will-change: box-shadow;
+  transition: 
+    background-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 /*.command.animate .copy-icon {
@@ -152,6 +169,7 @@ header p {
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.9);
   color: white;
+  text-align: center;
   padding: 1rem;
   border-radius: 5px;
   font-size: 1rem;
@@ -191,6 +209,7 @@ footer.light-theme {
 
 .theme-toggle {
   position: absolute;
+  z-index: 2;
   top: 1rem;
   right: 1rem;
   background-color: rgba(37, 117, 252, 0.2);
@@ -243,7 +262,7 @@ footer.light-theme {
   text-align: center;
   font-size: 1rem;
   text-decoration: none;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s; 
 }
 
 .open-stream-btn:hover {
@@ -316,7 +335,7 @@ footer.light-theme {
 
 .icon-tv {
   position: relative;
-  top: -3px;
+  top: -2px;
 }
 
 /* Общие стили контейнера */
@@ -382,8 +401,12 @@ footer.light-theme {
 }
 
 /* Адаптив для мобилок */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .stream-link { 
     width: 100%; 
   }
+
+  .icon-tv {
+  position: relative;
+  top: -6px;
 }
