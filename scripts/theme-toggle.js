@@ -69,13 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
   applySavedTheme();
 });
 
-/* десктоп: скрытие кнопки спустя 10сек после захода до тех пор, пока пользователь не наведёт курсор на хеадер */
+/* десктоп: спустя 10сек после открытия сайта скрываем кнопку до тех пор, пока пользователь не наведёт курсор на хеадер */
 
 document.addEventListener('DOMContentLoaded', function() {
   const themeToggle = document.querySelector('.theme-toggle');
   const header = document.querySelector('header');
   const isDesktop = window.innerWidth >= 1024;
-  const INITIAL_DELAY = 1000; // 10 секунд
+  const INITIAL_DELAY = 10000; // 10 секунд
 
   let initialTimer;
   let isInitialPeriod = true;

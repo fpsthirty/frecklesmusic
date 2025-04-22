@@ -273,20 +273,20 @@ footer.light-theme {
 .open-stream-btn:hover {
   background-color: #6a11cb;
 }
-
-@media (max-width: 768px) {
-  .theme-toggle {
-    top: 0;
-    right: 0;
-    padding: 0.5rem;
-    border: none;
-    background-color: transparent;
-    padding: 8px; /* Делаем кнопку квадратной */
-    width: 40px; /* Фиксированная ширина */
-    text-align: center;
-    display: block !important;
-    opacity: 1 !important;
-  }
+  /* Для мобильных */
+  @media (max-width: 767px) {
+    .theme-toggle {
+      top: 0;
+      right: 0;
+      padding: 0.5rem;
+      border: none;
+      background-color: transparent;
+      padding: 8px; /* Делаем кнопку квадратной */
+      width: 40px; /* Фиксированная ширина */
+      text-align: center;
+      display: block !important;
+      opacity: 1 !important;
+    }
 
   .theme-toggle span {
     display: none;
@@ -317,8 +317,18 @@ footer.light-theme {
   }
 }
 
+  /* Для мобильных и планшетов */
+  @media (max-width: 1180px) {
+    .desktop-text {
+      display: none;
+    }
+    .mobile-text {
+      display: inline;
+    }
+  }
+
   /* Планшетная версия: два столбца */
-  @media (min-width: 768px) and (max-width: 1024px) {
+  @media (min-width: 768px) and (max-width: 1180px) {
     .command-list {
       grid-template-columns: repeat(2, 1fr); /* Два столбца для планшетов */
     }
@@ -330,11 +340,15 @@ footer.light-theme {
   }
 
   /* ПК версия: три столбца */
-  @media (min-width: 1024px) {
+  @media (min-width: 1180px) {
+    .mobile-text {
+      display: none;
+    }
+
     .command-list {
       grid-template-columns: repeat(3, 1fr); /* Три столбца для ПК */
     }
-    
+
     .theme-toggle {
       opacity: 0;
       pointer-events: none;
@@ -423,12 +437,12 @@ footer.light-theme {
 }
 
 /* Адаптив для мобилок */
-@media (max-width: 1024px) {
+@media (max-width: 767px) {
   .stream-link { 
     width: 100%; 
   }
 
   .icon-tv {
   position: relative;
-  top: -6px;
+  top: -5px;
 }
