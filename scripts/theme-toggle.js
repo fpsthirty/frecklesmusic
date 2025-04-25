@@ -24,14 +24,14 @@ function updateThemeButton() {
   const themeTextSpan = document.querySelector('.theme-text');
   
   if (body.classList.contains('light-theme')) {
-    if (window.innerWidth > 768) {
+    if (window.innerWidth >= 768) {
       themeToggleButton.innerHTML = '<span class="theme-text">🌙 Тёмная тема</span>';
     } else {
       themeToggleButton.textContent = "🌙";
     }
     themeToggleButton.setAttribute('aria-label', 'Переключить на темную тему');
   } else {
-    if (window.innerWidth > 768) {
+    if (window.innerWidth >= 768) {
       themeToggleButton.innerHTML = '<span class="theme-text">🌞 Светлая тема</span>';
     } else {
       themeToggleButton.textContent = "🌞";

@@ -64,7 +64,7 @@ header p {
 }
 
 .content-general {
-  max-width: 800px;
+  max-width: 1024px;
   margin: 2rem auto;
   padding: 0 1rem;
 }
@@ -131,7 +131,7 @@ header p {
 .stream-section h2 {
   text-align: center;
   font-size: 1.5rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0rem;
 }
 
 .stream-embed {
@@ -273,93 +273,6 @@ footer.light-theme {
 .open-stream-btn:hover {
   background-color: #6a11cb;
 }
-  /* Для мобильных */
-  @media (max-width: 767px) {
-    .theme-toggle {
-      top: 0;
-      right: 0;
-      padding: 0.5rem;
-      border: none;
-      background-color: transparent;
-      padding: 8px; /* Делаем кнопку квадратной */
-      width: 40px; /* Фиксированная ширина */
-      text-align: center;
-      display: block !important;
-      opacity: 1 !important;
-    }
-
-  .theme-toggle span {
-    display: none;
-  }
-
-  .theme-toggle:hover {
-    background: transparent;
-  }
-
-  header h1 {
-    font-size: 2rem;
-  }
-
-  .command h3 {
-    font-size: 1rem;
-  }
-
-  iframe {
-    height: 250px;
-  }
-
-  .command-list {
-    grid-template-columns: 1fr; /* Один столбец для мобильных устройств */
-  }
-
-  .toast {
-    top: 80%;
-  }
-}
-
-  /* Для мобильных и планшетов */
-  @media (max-width: 1180px) {
-    .desktop-text {
-      display: none;
-    }
-    .mobile-text {
-      display: inline;
-    }
-  }
-
-  /* Планшетная версия: два столбца */
-  @media (min-width: 768px) and (max-width: 1180px) {
-    .command-list {
-      grid-template-columns: repeat(2, 1fr); /* Два столбца для планшетов */
-    }
-  }
-
-  /* Стили для планшетов и десктопов */
-  @media (min-width: 768px) {
-
-  }
-
-  /* ПК версия: три столбца */
-  @media (min-width: 1180px) {
-    .mobile-text {
-      display: none;
-    }
-
-    .command-list {
-      grid-template-columns: repeat(3, 1fr); /* Три столбца для ПК */
-    }
-
-    .theme-toggle {
-      opacity: 0;
-      pointer-events: none;
-    }
-
-    .theme-toggle.visible,
-    header:hover ~ .theme-toggle {
-      opacity: 1;
-      pointer-events: auto;
-    }
-  }
 
 /* --------------- stream section --------------- */
 
@@ -387,7 +300,7 @@ footer.light-theme {
 .stream-link {
   display: flex;
   align-items: center;
-  width: 250px;
+  width: 300px;
   padding: 15px;
   border-radius: 10px;
   text-decoration: none;
@@ -436,13 +349,120 @@ footer.light-theme {
   font-size: 0.9rem;
 }
 
-/* Адаптив для мобилок */
-@media (max-width: 767px) {
+/* -----------------
+ @media-запросы
+----------------- */
+  /* Для мобильных */
+  @media (max-width: 767px) {
+    .theme-toggle {
+      top: 0;
+      right: 0;
+      padding: 0.5rem;
+      border: none;
+      background-color: transparent;
+      padding: 8px; /* Делаем кнопку квадратной */
+      width: 40px; /* Фиксированная ширина */
+      text-align: center;
+      display: block !important;
+      opacity: 1 !important;
+    }
+
+  .theme-toggle span {
+    display: none;
+  }
+
+  .theme-toggle:hover {
+    background: transparent;
+  }
+
+  header h1 {
+    font-size: 2rem;
+  }
+
+  .command h3 {
+    font-size: 1rem;
+  }
+
+  iframe {
+    height: 250px;
+  }
+
+  .command-list {
+    grid-template-columns: 1fr; /* Один столбец для мобильных устройств */
+  }
+
+  .toast {
+    top: 80%;
+  }
+
   .stream-link { 
     width: 100%; 
   }
 
   .icon-tv {
-  position: relative;
-  top: -5px;
+    position: relative;
+    top: -5px;
+  }
+
+  .stream-section {
+    margin-top: 2rem;
+  }
+
+  .stream-section h2 {
+    margin-bottom: -1rem;
+  }
+
+  .stream-links a {
+    padding-left: 20%;
+    max-width: 300px;
+  }
+}
+
+/* Для мобильных и планшетов */
+@media (max-width: 1180px) {
+  .desktop-text {
+    display: none;
+  }
+
+  .mobile-text {
+    display: inline;
+  }
+
+  .command {
+    text-align: center;
+  }
+}
+
+/* Планшетная версия: два столбца */
+@media (min-width: 768px) and (max-width: 1180px) {
+  .command-list {
+    grid-template-columns: repeat(2, 1fr); /* Два столбца для планшетов */
+  }
+}
+
+/* Стили для планшетов и десктопов */
+@media (min-width: 768px) {
+
+}
+
+/* ПК версия: три столбца */
+@media (min-width: 1180px) {
+  .mobile-text {
+    display: none;
+  }
+
+  .command-list {
+    grid-template-columns: repeat(3, 1fr); /* Три столбца для ПК */
+  }
+
+  .theme-toggle {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .theme-toggle.visible,
+  header:hover ~ .theme-toggle {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
