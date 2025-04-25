@@ -298,40 +298,59 @@ function generateCommandBlocks(commands) {
   animateCommandListBackground(commandList);
   commandList.innerHTML = "";
 
-  // Определяем текущую тему
   const isLightTheme = document.body.classList.contains('light-theme');
 
-  // Фильтруем команды
   const filteredCommands = activeEmoji
     ? commands.filter(cmd => cmd.command.includes(activeEmoji))
     : commands;
 
-  // Создаем блоки команд
   filteredCommands.forEach((cmd) => {
     const commandText = typeof cmd === 'string' ? cmd : cmd.command;
+    const commandName = commandText.split('/')[0].split(" ")[0];
     const description = typeof cmd === 'string' ? '' : cmd.description || '';
 
     const block = document.createElement("div");
     block.className = "command";
-
-    // Добавляем класс темы, если она активна
-    if (isLightTheme) {
-      block.classList.add('light-theme');
-    }
+    if (isLightTheme) block.classList.add('light-theme');
 
     const icon = document.createElement("button");
     icon.className = "copy-icon";
-
+    // Добавляем ARIA-атрибуты
+    icon.setAttribute('aria-label', `Копировать команду ${commandName}`);
+    icon.setAttribute('title', `Копировать ${commandName}`); // Для тултипа
+    
+    // Создаем содержимое через DOM-методы вместо innerHTML
+    const heading = document.createElement("h2");
+    heading.textContent = commandText;
+    
     block.appendChild(icon);
-    block.innerHTML += `
-      <h3>${commandText}</h3>
-      ${description ? `<p>${description}</p>` : ''}
-    `;
+    block.appendChild(heading);
+    
+    if (description) {
+      const desc = document.createElement("p");
+      desc.textContent = description;
+      block.appendChild(desc);
+    }
+
+    // Делаем весь блок доступным для навигации
+    block.setAttribute('role', 'button');
+    block.setAttribute('tabindex', '0');
+    block.setAttribute('aria-label', `Команда: ${commandText}. ${description}`);
 
     block.addEventListener("click", function() {
       animateIcon(icon);
       animateBackground(this);
-      copyToClipboard(commandText.split('/')[0].split(" ")[0]);
+      copyToClipboard(commandName);
+    });
+
+    // Добавляем обработчик клавиатуры
+    block.addEventListener("keydown", function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        animateIcon(icon);
+        animateBackground(this);
+        copyToClipboard(commandName);
+      }
     });
 
     commandList.appendChild(block);

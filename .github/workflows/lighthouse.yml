@@ -1,0 +1,24 @@
+name: Lighthouse
+on: [push]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+      - run: npm install -g @lhci/cli
+      - run: lhci autorun
+      - name: Extract Lighthouse Hash
+        id: lh-hash
+        run: |
+          HASH=$(grep -oP 'reports/\K[^"]+' ./lhci_reports/manifest.json)
+          echo "hash=$HASH" >> $GITHUB_OUTPUT
+      - name: Update README
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let readme = fs.readFileSync('README.md', 'utf8');
+            readme = readme.replace(/<YOUR_SITE_HASH>/g, '${{ steps.lh-hash.outputs.hash }}');
+            fs.writeFileSync('README.md', readme);

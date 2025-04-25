@@ -1,0 +1,13 @@
+name: W3C Validation
+on: [push, pull_request]  # Запуск при push или PR
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate HTML
+        uses: cycjimmy/w3c-validator-action@v3
+        with:
+          url: 'https://fpsthirty.github.io/frecklesmusic/'
+          ignore-warnings: true

@@ -98,7 +98,7 @@ header p {
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Освещаем блок в тёмной теме */
 }
 
-.command h3 {
+.command h2 {
   margin: 0;
   font-size: 1.2rem;
   color: #ffffff;
@@ -118,7 +118,7 @@ header p {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Затемняем блок в светлой теме */
 }
 
-.command.light-theme h3 {
+.command.light-theme h2 {
   color: #333333; /* Тёмный текст в светлой теме */
 }
 
@@ -445,7 +445,7 @@ footer.light-theme {
     font-size: 2rem;
   }
 
-  .command h3 {
+  .command h2 {
     font-size: 1rem;
   }
 
