@@ -9,16 +9,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18
-      - name: Install Lighthouse CI
-        run: npm install -g @lhci/cli
+      
       - name: Run Lighthouse CI
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: lhci autorun --config=./lighthouserc.json
+        run: |
+          npx -y @lhci/cli autorun \
+            --config=./lighthouserc.json \
+            --upload.target=temporary-public-storage
       - name: Extract Lighthouse Hash
         id: lh-hash
         run: |
