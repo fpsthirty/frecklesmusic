@@ -1,0 +1,16 @@
+{
+  "ci": {
+    "collect": {
+      "url": ["https://fpsthirty.github.io/frecklesmusic/"],
+      "numberOfRuns": 3,
+      "startServerCommand": "npm run start", // Если нужно запустить сервер
+      "staticDistDir": "./dist" // Если проверяете статичные файлы
+    },
+    "assert": {
+      "preset": "lighthouse:recommended"
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}
