@@ -1,6 +1,9 @@
 name: Lighthouse
-on: [push]
-
+on:
+  push:
+    branches: [ main ]  # Запуск при push в main
+  pull_request:         # Или при создании PR
+  workflow_dispatch:    # Ручной запуск через UI
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
@@ -14,11 +17,7 @@ jobs:
         run: |
           HASH=$(grep -oP 'reports/\K[^"]+' ./lhci_reports/manifest.json)
           echo "hash=$HASH" >> $GITHUB_OUTPUT
-      - name: Update README
-        uses: actions/github-script@v7
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
         with:
-          script: |
-            const fs = require('fs');
-            let readme = fs.readFileSync('README.md', 'utf8');
-            readme = readme.replace(/<YOUR_SITE_HASH>/g, '${{ steps.lh-hash.outputs.hash }}');
-            fs.writeFileSync('README.md', readme);
+          path: './lhci_reports'
