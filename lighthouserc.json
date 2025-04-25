@@ -3,8 +3,8 @@
     "collect": {
       "url": ["https://fpsthirty.github.io/frecklesmusic/"],
       "numberOfRuns": 3,
-      "startServerCommand": "npm run start", // Если нужно запустить сервер
-      "staticDistDir": "./dist" // Если проверяете статичные файлы
+      "startServerCommand": "npm run start",
+      "staticDistDir": "./dist"
     },
     "assert": {
       "preset": "lighthouse:recommended"
