@@ -73,6 +73,8 @@ header p {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
+  border-radius: 8px;
+  padding: 0.5rem;
 }
 
 .command {
@@ -83,26 +85,17 @@ header p {
   position: relative;
   cursor: pointer;
   will-change: box-shadow;
-  transition: 
+  transition:
     background-color 0.3s ease,
     box-shadow 0.3s ease;
 }
 
 /*.command.animate .copy-icon {
-  transform: scale(1.5) rotate(15deg); 
+  transform: scale(1.5) rotate(15deg);
 }*/
-
-.command.light-theme {
-  background: #dddddd;
-  border-left: 5px solid #2575fc;
-}
 
 .command:hover {
   box-shadow: 0 4px 8px rgba(255, 255, 255, 0.2); /* Освещаем блок в тёмной теме */
-}
-
-.command.light-theme:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Затемняем блок в светлой теме */
 }
 
 .command h3 {
@@ -111,13 +104,22 @@ header p {
   color: #ffffff;
 }
 
-.command.light-theme h3 {
-  color: #333333; /* Тёмный текст в светлой теме */
-}
-
 .command p {
   margin: 0.5rem 0 0;
   color: #cccccc;
+}
+
+.command.light-theme {
+  background: #dddddd;
+  border-left: 5px solid #2575fc;
+}
+
+.command.light-theme:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Затемняем блок в светлой теме */
+}
+
+.command.light-theme h3 {
+  color: #333333; /* Тёмный текст в светлой теме */
 }
 
 .command.light-theme p {
@@ -248,7 +250,7 @@ footer.light-theme {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  opacity: 0; 
+  opacity: 0;
   transition: all 0.3s ease;
 }
 
@@ -267,7 +269,7 @@ footer.light-theme {
   text-align: center;
   font-size: 1rem;
   text-decoration: none;
-  transition: background-color 0.3s; 
+  transition: background-color 0.3s;
 }
 
 .open-stream-btn:hover {
@@ -316,18 +318,18 @@ footer.light-theme {
 }
 
 /* Цвета платформ */
-.twitch { 
+.twitch {
   background: #6a11cb;
 }
-.youtube { 
-  background: #781b1b; 
+.youtube {
+  background: #781b1b;
 }
-.goodgame { 
-  background: #0c1220; 
+.goodgame {
+  background: #0c1220;
 }
 
-.vk { 
-  background: #0277ff; 
+.vk {
+  background: #0277ff;
 }
 
 /* Стили иконок */
@@ -347,6 +349,65 @@ footer.light-theme {
   margin: 5px 0 0;
   opacity: 0.9;
   font-size: 0.9rem;
+}
+
+/* Общие стили для фильтров */
+.emoji-filters-container {
+  display: flex;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 20px;
+  padding: 10px 0;
+  transition: background-color 0.3s ease;
+  border-radius: 8px;
+
+  margin-left: 8px;
+  background-color: rgba(42, 42, 42, 0.3); /* Полупрозрачный фон для темной темы */
+  justify-content: center;
+  align-items: center;
+  width: fit-content; /* Ширина по содержимому */
+  width: calc(100% - 16px);
+}
+
+.light-theme .emoji-filters-container {
+  background-color: rgba(224, 224, 224, 0.3); /* Полупрозрачный фон для светлой темы */
+}
+
+.emoji-filter {
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: #2a2a2a; /* Темная тема (по умолчанию) */
+  color: white;
+}
+
+.emoji-filter:hover {
+  background: #3a3a3a;
+}
+
+.emoji-filter.active {
+  background: #6a11cb;
+  box-shadow: 0 0 0 2px rgba(106, 17, 203, 0.5);
+}
+
+/* Светлая тема */
+.light-theme .emoji-filter {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.light-theme .emoji-filter:hover {
+  background: #d0d0d0;
+}
+
+.light-theme .emoji-filter.active {
+  background: #2575fc;
+  box-shadow: 0 0 0 2px rgba(43, 133, 226, 0.3);
+  color: white;
 }
 
 /* -----------------
@@ -375,6 +436,11 @@ footer.light-theme {
     background: transparent;
   }
 
+  .toast {
+    max-width: 70%;
+    width: 250px;
+  }
+
   header h1 {
     font-size: 2rem;
   }
@@ -395,8 +461,8 @@ footer.light-theme {
     top: 80%;
   }
 
-  .stream-link { 
-    width: 100%; 
+  .stream-link {
+    width: 100%;
   }
 
   .icon-tv {

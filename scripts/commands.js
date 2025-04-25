@@ -2,9 +2,58 @@
 // набор данных
 // ----------------------
 
+// ----------------------
+// глобальные переменные
+// ----------------------
+
+let activeEmoji = null;
+
 // Массив команд
 const commands = [
-{
+
+  {
+    command: "!bass 📽️",
+  },
+  {
+    command: "!cartoon 📽️",
+  },
+  {
+    command: "!colors 📽️",
+  },
+  {
+    command: "!duhota/духота 📽️",
+  },
+  {
+    command: "!goodnight 📽️",
+  },
+  {
+    command: "!horror/страшно/ужас 📽️",
+  },
+  {
+    command: "!minecraft 📽️",
+  },
+  {
+    command: "!munch 📽️",
+  },
+  {
+    command: "!sunshine 📽️",
+  },
+  {
+    command: "!predator 📽️",
+  },
+  {
+    command: "!pulse/пульс 📽️",
+  },
+  {
+    command: "!дождь/боль/rain 📽️",
+  },
+  {
+    command: "!tv 📽️",
+  },
+  {
+    command: "!грибы 📽️",
+  },
+  {
     command: "!clap 👏",
   },
   {
@@ -77,27 +126,6 @@ const commands = [
     command: "!вжух11 🎉",
   },
   {
-    command: "!паук 🕷️",
-  },
-  {
-    command: "!паук1 🕷️",
-  },
-  {
-    command: "!паук2 🕷️",
-  },
-  {
-    command: "!паук3 🕷️",
-  },
-  {
-    command: "!паук4 🕷️",
-  },
-  {
-    command: "!паук5 🕷️",
-  },
-  {
-    command: "!паучок 🕷️",
-  },
-  {
     command: "!цветы 💐",
   },
   {
@@ -155,6 +183,27 @@ const commands = [
     command: "!fall 🍁",
   },
   {
+    command: "!паук 🕷️",
+  },
+  {
+    command: "!паук1 🕷️",
+  },
+  {
+    command: "!паук2 🕷️",
+  },
+  {
+    command: "!паук3 🕷️",
+  },
+  {
+    command: "!паук4 🕷️",
+  },
+  {
+    command: "!паук5 🕷️",
+  },
+  {
+    command: "!паучок 🕷️",
+  },
+  {
     command: "!бан/ban 🍲",
   },
   {
@@ -169,71 +218,110 @@ const commands = [
   {
     command: "!фигвам/figvam 🍲",
   },
-  {
-    command: "!bass 📽️",
-  },
-  {
-    command: "!cartoon 📽️",
-  },
-  {
-    command: "!colors 📽️",
-  },
-  {
-    command: "!duhota/духота 📽️",
-  },
-  {
-    command: "!goodnight 📽️",
-  },
-  {
-    command: "!horror/страшно/ужас 📽️",
-  },
-  {
-    command: "!minecraft 📽️",
-  },
-  {
-    command: "!munch 📽️",
-  },
-  {
-    command: "!sunshine 📽️",
-  },
-  {
-    command: "!predator 📽️",
-  },
-  {
-    command: "!pulse/пульс 📽️",
-  },
-  {
-    command: "!дождь/боль/rain 📽️",
-  },
-  {
-    command: "!tv 📽️",
-  },
-  {
-    command: "!грибы 📽️",
-  },
 ];
 
 // ----------------------
 // набор функций
 // ----------------------
 
-// генерация HTML-блоков с командами
+// Функция для извлечения эмоджи из строки команды
+function extractEmoji(commandText) {
+  const emojiMatch = commandText.match(/[^\w\s!\/-][\uFE0F]?/gu);
+  return emojiMatch ? emojiMatch[emojiMatch.length - 1] : null;
+}
+
+// Функция для получения уникальных эмоджи из массива команд
+function getUniqueEmojis(commands) {
+  const emojis = new Set();
+  commands.forEach(cmd => {
+    const emoji = extractEmoji(cmd.command);
+    if (emoji) emojis.add(emoji);
+  });
+  return Array.from(emojis);
+}
+
+// Функция для создания кнопок фильтрации
+function createFilterButtons(emojis) {
+  const filterContainer = document.createElement('div');
+  filterContainer.className = 'emoji-filters-container';
+
+  // Добавляем кнопку "Все"
+  const allButton = document.createElement('button');
+  allButton.className = 'emoji-filter active';
+  allButton.textContent = 'Все';
+  allButton.addEventListener('click', () => {
+    activeEmoji = null;
+    generateCommandBlocks(commands);
+    updateActiveFilter();
+  });
+  filterContainer.appendChild(allButton);
+
+  // Добавляем кнопки для каждого эмоджи
+  emojis.forEach(emoji => {
+    const button = document.createElement('button');
+    button.className = 'emoji-filter';
+    button.textContent = emoji;
+    button.addEventListener('click', () => {
+      if (activeEmoji === emoji) {
+        activeEmoji = null; // Снимаем фильтр если кликаем на активное эмоджи
+      } else {
+        activeEmoji = emoji; // Устанавливаем новый фильтр
+      }
+      generateCommandBlocks(commands);
+      updateActiveFilter();
+      animateCommandListBackground(document.querySelector('.command-list'));
+    });
+    filterContainer.appendChild(button);
+  });
+
+  // Вставляем контейнер с кнопками перед списком команд
+  const commandList = document.querySelector('.command-list');
+  commandList.parentNode.insertBefore(filterContainer, commandList);
+}
+
+// Функция для обновления активного фильтра
+function updateActiveFilter() {
+  document.querySelectorAll('.emoji-filter').forEach(button => {
+    if (button.textContent === 'Все' && !activeEmoji) {
+      button.classList.add('active');
+    } else if (button.textContent === activeEmoji) {
+      button.classList.add('active');
+    } else {
+      button.classList.remove('active');
+    }
+  });
+}
+
+// функция генерации блоков команд
 function generateCommandBlocks(commands) {
   const commandList = document.querySelector(".command-list");
+  animateCommandListBackground(commandList);
   commandList.innerHTML = "";
 
-  commands.forEach((cmd) => {
-    // Обрабатываем оба варианта: строку и объект
+  // Определяем текущую тему
+  const isLightTheme = document.body.classList.contains('light-theme');
+
+  // Фильтруем команды
+  const filteredCommands = activeEmoji
+    ? commands.filter(cmd => cmd.command.includes(activeEmoji))
+    : commands;
+
+  // Создаем блоки команд
+  filteredCommands.forEach((cmd) => {
     const commandText = typeof cmd === 'string' ? cmd : cmd.command;
     const description = typeof cmd === 'string' ? '' : cmd.description || '';
 
     const block = document.createElement("div");
     block.className = "command";
-    
+
+    // Добавляем класс темы, если она активна
+    if (isLightTheme) {
+      block.classList.add('light-theme');
+    }
+
     const icon = document.createElement("button");
     icon.className = "copy-icon";
-    icon.innerHTML = ""; // не нравятся универсальные иконки, решил вовсе удалить
-    
+
     block.appendChild(icon);
     block.innerHTML += `
       <h3>${commandText}</h3>
@@ -250,7 +338,7 @@ function generateCommandBlocks(commands) {
   });
 }
 
-// анимации иконки в блоке команды
+// анимация иконки в блоке команды
 function animateIcon(iconElement) {
   iconElement.style.transform = "scale(1.3)";
   setTimeout(() => {
@@ -266,12 +354,22 @@ function animateBackground(element) {
   }, 300);
 }
 
+// анимация фона для списка команд (при применении фильтрации списка команд)
+function animateCommandListBackground(element) {
+  element.style.backgroundColor = "rgba(96, 96, 96, 0.6)";
+  element.style.transition = "background-color 0.3s ease";
+
+  setTimeout(() => {
+    element.style.backgroundColor = "";
+  }, 300);
+}
+
 // копирование в буфер обмена
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(() => {
     const toast = document.getElementById("toast");
     toast.classList.add("show");
-    
+
     setTimeout(() => {
       toast.style.opacity = "0";
       setTimeout(() => {
@@ -282,7 +380,16 @@ function copyToClipboard(text) {
   });
 }
 
-// Запускаем генерацию при загрузке страницы
+// ----------------------
+// инициализация
+// ----------------------
 document.addEventListener("DOMContentLoaded", () => {
+  // Получаем уникальные эмоджи
+  const uniqueEmojis = getUniqueEmojis(commands);
+
+  // Создаем кнопки фильтрации
+  createFilterButtons(uniqueEmojis);
+
+  // Генерируем все команды
   generateCommandBlocks(commands);
 });
