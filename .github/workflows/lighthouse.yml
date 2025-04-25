@@ -21,9 +21,25 @@ jobs:
         run: lhci autorun --config=./lighthouserc.json
       - name: Extract Lighthouse Hash
         id: lh-hash
+        if: success()  # Только если предыдущие шаги выполнены успешно
         run: |
-          HASH=$(grep -oP 'reports/\K[^"]+' ./lhci_reports/manifest.json)
-          echo "hash=$HASH" >> $GITHUB_OUTPUT
+          # Создаем папку, если её нет (на всякий случай)
+          mkdir -p ./lhci_reports
+          
+          # Ищем хеш в логах (альтернативный способ)
+          HASH=$(grep -oP 'reports\/\K[^"]+' ./lighthouseci/manifest.json || true)
+          
+          # Если не нашли в manifest.json, пробуем из URL в логах
+          if [ -z "$HASH" ]; then
+            HASH=$(grep -oP 'storage.googleapis.com\/lighthouse-infrastructure\.appspot\.com\/reports\/\K[^/]+' ./lighthouseci/lhr-*.json || true)
+          fi
+          
+          # Если хеш найден, сохраняем его
+          if [ -n "$HASH" ]; then
+            echo "hash=${HASH}" >> $GITHUB_OUTPUT
+          else
+            echo "::warning::Lighthouse hash not found!"
+          fi
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
