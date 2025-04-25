@@ -1,0 +1,41 @@
+# Lighthouse CI
+.lighthouseci/
+lhci_reports/
+*.lighthouse.report.html
+
+# Node.js
+node_modules/
+.npm
+.pnpm
+.yarn-integrity
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Логи и кэш
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Системные файлы
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*.env
+.env.local
+
+# Автогенерируемые файлы
+dist/
+build/
+out/
+.next/
+.temp/
+.cache/
+
+# GitHub Pages
+_site/
+.sass-cache/
+.jekyll-cache/
