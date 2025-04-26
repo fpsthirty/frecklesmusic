@@ -26,12 +26,28 @@ jobs:
           lhci autorun --config=./lighthouserc.json || echo "::warning::Lighthouse run completed (hash may be missing)"
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Extract Lighthouse Hash
-        id: lh-hash
-        run: |
-          # Извлекаем хеш из URL в логах
-          HASH=$(grep -oP 'reports\/\K[^/]+(?=\.report\.html)' ./lighthouseci/log-*.json)
-          echo "hash=${HASH}" >> $GITHUB_OUTPUT
+        - name: Extract Lighthouse Hash
+          id: lh-hash
+          run: |
+            # Ищем URL отчета в логах Lighthouse CI
+            REPORT_URL=$(grep -oP 'https://storage\.googleapis\.com/lighthouse-infrastructure\.appspot\.com/reports/[0-9-]+\.report\.html' ./lighthouseci/console-log.txt || true)
+            
+            # Если URL найден, извлекаем хэш
+            if [ -n "$REPORT_URL" ]; then
+              HASH=$(echo "$REPORT_URL" | grep -oP 'reports/\K[0-9-]+(?=\.report\.html)')
+              echo "hash=${HASH}" >> $GITHUB_OUTPUT
+              echo "Found Lighthouse hash: ${HASH}"
+            else
+              # Альтернативный поиск в других логах
+              HASH=$(grep -oP 'View report at:.*reports/\K[0-9-]+' .lighthouseci/*.log || true)
+              if [ -n "$HASH" ]; then
+                echo "hash=${HASH}" >> $GITHUB_OUTPUT
+                echo "Found Lighthouse hash (alternative method): ${HASH}"
+              else
+                echo "::warning::Lighthouse report URL not found in logs!"
+                echo "hash=not-found" >> $GITHUB_OUTPUT
+              fi
+            fi
 
       - name: Update Badge in README
         uses: actions/github-script@v7
