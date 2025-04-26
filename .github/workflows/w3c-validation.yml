@@ -10,10 +10,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20  # Используем актуальную LTS-версию
+          node-version: 20
       
       - name: Install Validator
-        run: npm install -g w3c-html-validator  # Только основной пакет
+        run: npm install -g w3c-html-validator
       
       - name: Run Validation
         run: |
@@ -23,8 +23,8 @@ jobs:
             exit 1
           fi
           
-          # Запускаем валидатор
-          validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
+          # Явно вызываем через npx
+          npx w3c-html-validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
           
           # Проверяем результаты
           ERROR_COUNT=$(jq -r '.messages[] | select(.type == "error") | .message' docs/w3c-results.json | wc -l)
