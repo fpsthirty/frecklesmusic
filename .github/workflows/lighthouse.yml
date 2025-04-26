@@ -86,7 +86,14 @@ jobs:
           path: lighthouse-artifacts/
           if-no-files-found: ignore
 
+      - name: Debug Files
+        run: |
+          echo "Содержимое .lighthouseci/:"
+          ls -la .lighthouseci/
+          echo "Содержимое lhci_reports/:"
+          ls -la lhci_reports/ || echo "Папка не существует"
+
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './lhci_reports'
+          path: '.lighthouseci/'
