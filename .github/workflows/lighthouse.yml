@@ -108,18 +108,18 @@ jobs:
             \"accessibility\": $ACCESSIBILITY,
             \"best_practices\": $BEST_PRACTICES,
             \"seo\": $SEO
-          }" > docs/lighthouse-metrics.json
+          }" > docs/lighthouse-score.json
           
           # Дополнительная проверка файла
-          if ! jq empty docs/lighthouse-metrics.json 2>/dev/null; then
+          if ! jq empty docs/lighthouse-score.json 2>/dev/null; then
             echo "::error::Invalid JSON generated!"
-            echo "{\"error\":\"invalid_data\"}" > docs/lighthouse-metrics.json
+            echo "{\"error\":\"invalid_data\"}" > docs/lighthouse-score.json
           fi
       - name: Validate JSON
         run: |
           echo "Проверяем файл метрик:"
-          cat docs/lighthouse-metrics.json
-          if ! jq empty docs/lighthouse-metrics.json; then
+          cat docs/lighthouse-score.json
+          if ! jq empty docs/lighthouse-score.json; then
             echo "::error::Invalid JSON file!"
             exit 1
           fi
