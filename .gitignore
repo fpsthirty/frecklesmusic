@@ -35,9 +35,6 @@ out/
 .temp/
 .cache/
 
-# Автообновляемые файлы
-docs/lighthouse-score.json
-
 # GitHub Pages
 _site/
 .sass-cache/
