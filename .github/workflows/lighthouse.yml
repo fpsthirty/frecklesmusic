@@ -89,6 +89,6 @@ jobs:
 
       - name: Save Score to Pages
         run: |
-          mkdir -p docs
+          mkdir -p docs  # Создаём папку, если её нет
           echo ${{ steps.lh-score.outputs.score }} > docs/lighthouse-score.txt
         if: success()
