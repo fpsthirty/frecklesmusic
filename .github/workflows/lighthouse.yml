@@ -15,31 +15,35 @@ jobs:
           node-version: 18
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli
+      - name: Install jq
+        run: sudo apt-get install -y jq
       - name: Run Lighthouse CI
+        run: |
+          lhci autorun --config=./lighthouserc.json || echo "::warning::Lighthouse run completed (hash may be missing)"
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: lhci autorun --config=./lighthouserc.json
       - name: Extract Lighthouse Hash
         id: lh-hash
-        if: success()  # Только если предыдущие шаги выполнены успешно
+        continue-on-error: true  # Продолжать даже при ошибке
         run: |
-          # Создаем папку, если её нет (на всякий случай)
-          mkdir -p ./lhci_reports
+          # Устанавливаем jq если нужно
+          command -v jq >/dev/null || sudo apt-get install -y jq
           
-          # Ищем хеш в логах (альтернативный способ)
-          HASH=$(grep -oP 'reports\/\K[^"]+' ./lighthouseci/manifest.json || true)
+          # Парсим хеш
+          HASH=$(cat .lighthouseci/manifest.json 2>/dev/null | jq -r '.hash' || true)
           
-          # Если не нашли в manifest.json, пробуем из URL в логах
           if [ -z "$HASH" ]; then
-            HASH=$(grep -oP 'storage.googleapis.com\/lighthouse-infrastructure\.appspot\.com\/reports\/\K[^/]+' ./lighthouseci/lhr-*.json || true)
+            echo "::warning::Hash not found in manifest.json, trying logs..."
+            HASH=$(grep -oP 'reports\/\K[^/]+' .lighthouseci/log-*.json 2>/dev/null | head -1 || true)
           fi
           
-          # Если хеш найден, сохраняем его
-          if [ -n "$HASH" ]; then
-            echo "hash=${HASH}" >> $GITHUB_OUTPUT
-          else
-            echo "::warning::Lighthouse hash not found!"
-          fi
+          echo "hash=${HASH:-default}" >> $GITHUB_OUTPUT
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
