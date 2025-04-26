@@ -85,11 +85,31 @@ jobs:
         with:
           path: '.lighthouseci/'
 
-      - name: Extract Lighthouse Score
-        id: lh-score
+      - name: Extract Lighthouse Metrics
+        id: lh-metrics
         run: |
-          SCORE=$(jq -r '[.categories[]?.score? // 0 | . * 100 | floor] | max' .lighthouseci/lhr-*.json)
-          echo "score=${SCORE}" >> $GITHUB_OUTPUT
+          # Читаем последний отчёт
+          REPORT=$(ls -t .lighthouseci/lhr-*.json | head -1)
+          
+          # Извлекаем все ключевые метрики
+          PERFORMANCE=$(jq -r '.categories.performance.score * 100 | floor' $REPORT)
+          ACCESSIBILITY=$(jq -r '.categories.accessibility.score * 100 | floor' $REPORT)
+          BEST_PRACTICES=$(jq -r '.categories["best-practices"].score * 100 | floor' $REPORT)
+          SEO=$(jq -r '.categories.seo.score * 100 | floor' $REPORT)
+          
+          # Сохраняем в outputs
+          echo "performance=${PERFORMANCE}" >> $GITHUB_OUTPUT
+          echo "accessibility=${ACCESSIBILITY}" >> $GITHUB_OUTPUT
+          echo "best_practices=${BEST_PRACTICES}" >> $GITHUB_OUTPUT
+          echo "seo=${SEO}" >> $GITHUB_OUTPUT
+          
+          # Генерируем JSON для бейджа
+          echo '{
+            "performance": '$PERFORMANCE',
+            "accessibility": '$ACCESSIBILITY',
+            "best_practices": '$BEST_PRACTICES',
+            "seo": '$SEO'
+          }' > docs/lighthouse-metrics.json
 
       - name: Save Score to Pages
         run: |
