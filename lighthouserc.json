@@ -2,7 +2,8 @@
   "ci": {
     "collect": {
       "url": ["https://fpsthirty.github.io/frecklesmusic/"],
-      "numberOfRuns": 1
+      "numberOfRuns": 1,
+      "outputDir": ".lighthouseci"
     },
     "upload": {
       "target": "temporary-public-storage"

@@ -30,7 +30,7 @@ jobs:
         id: run-lhci
         run: |
           # Запускаем Lighthouse и сохраняем логи в файл
-          lhci autorun --config=./lighthouserc.json 2>&1 | tee ./lighthouse-output.log || echo "::warning::Lighthouse run completed"
+          lhci autorun --config=./lighthouserc.json --save-assets 2>&1 | tee ./lighthouse-output.log || echo "::warning::Lighthouse run completed"
         
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -71,11 +71,20 @@ jobs:
 
             fs.writeFileSync(readmePath, readme);
 
+      - name: Prepare Lighthouse Artifacts
+        run: |
+          mkdir -p lighthouse-artifacts
+          # Копируем ВСЕ возможные файлы отчётов
+          cp -a .lighthouseci/ lighthouse-artifacts/ 2>/dev/null || true
+          # Сохраняем хеш отдельно
+          echo "${{ steps.lh-hash.outputs.hash }}" > lighthouse-artifacts/latest-hash.txt
+
       - name: Upload Permanent Report
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-report-${{ steps.lh-hash.outputs.hash }}
-          path: .lighthouseci/
+          name: lighthouse-report-${{ github.run_id }}
+          path: lighthouse-artifacts/
+          if-no-files-found: ignore
 
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
