@@ -75,6 +75,10 @@ jobs:
           ls -la .lighthouseci/
           echo "Содержимое lhci_reports/:"
           ls -la lhci_reports/ || echo "Папка не существует"
+          echo "Содержимое docs/:"
+          ls -la docs/
+          echo "Текущий score:"
+          cat docs/lighthouse-score.txt || echo "Файл не найден"
 
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
@@ -89,6 +93,13 @@ jobs:
 
       - name: Save Score to Pages
         run: |
-          mkdir -p docs  # Создаём папку, если её нет
-          echo ${{ steps.lh-score.outputs.score }} > docs/lighthouse-score.txt
+          # Создаем папку и файл
+          mkdir -p docs
+          echo "${{ steps.lh-score.outputs.score }}" > docs/lighthouse-score.txt
+
+          # Форсируем публикацию через GitHub Pages API
+          curl -X POST \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/pages/builds
         if: success()
