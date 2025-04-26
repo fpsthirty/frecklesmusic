@@ -13,7 +13,7 @@ jobs:
           node-version: 20
       
       - name: Install Validator
-        run: npm install -g w3c-html-validator
+        run: npm install -g w3c-html-validator@5.0.1  # Явно указываем версию
       
       - name: Run Validation
         run: |
@@ -23,14 +23,17 @@ jobs:
             exit 1
           fi
           
-          # Явно вызываем через npx
-          npx w3c-html-validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
+          # Запускаем валидатор с актуальными флагами
+          npx w3c-html-validator \
+            --format=json \
+            --quiet \
+            https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
           
           # Проверяем результаты
           ERROR_COUNT=$(jq -r '.messages[] | select(.type == "error") | .message' docs/w3c-results.json | wc -l)
           if [ "$ERROR_COUNT" -gt 0 ]; then
             echo "::error::Found $ERROR_COUNT W3C validation errors"
-            jq -r '.messages[] | select(.type == "error") | "::error::\(.message)"' docs/w3c-results.json
+            jq -r '.messages[] | select(.type == "error") | "::error file=\(.extract)::Line \(.lastLine): \(.message)"' docs/w3c-results.json
             exit 1
           else
             echo "::notice::W3C validation passed successfully"
