@@ -10,20 +10,30 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20  # Используем актуальную LTS-версию
       
-      - name: Install W3C Validator
-        run: npm install -g w3c-html-validator @types/w3c-html-validator
+      - name: Install Validator
+        run: npm install -g w3c-html-validator  # Только основной пакет
       
-      - name: Validate HTML
+      - name: Run Validation
         run: |
-          npx w3c-html-validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
-          echo "Results saved to docs/w3c-results.json"
-          
-          # Проверка ошибок
-          if jq -e '.messages[] | select(.type == "error")' docs/w3c-results.json >/dev/null; then
-            echo "::error::W3C validation errors found!"
+          # Проверяем доступность URL
+          if ! curl -s -o /dev/null -w "%{http_code}" https://fpsthirty.github.io/frecklesmusic/ | grep -q 200; then
+            echo "::error::Website is not available"
             exit 1
+          fi
+          
+          # Запускаем валидатор
+          validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
+          
+          # Проверяем результаты
+          ERROR_COUNT=$(jq -r '.messages[] | select(.type == "error") | .message' docs/w3c-results.json | wc -l)
+          if [ "$ERROR_COUNT" -gt 0 ]; then
+            echo "::error::Found $ERROR_COUNT W3C validation errors"
+            jq -r '.messages[] | select(.type == "error") | "::error::\(.message)"' docs/w3c-results.json
+            exit 1
+          else
+            echo "::notice::W3C validation passed successfully"
           fi
       
       - name: Upload Results
