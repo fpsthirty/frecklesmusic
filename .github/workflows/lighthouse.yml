@@ -86,31 +86,43 @@ jobs:
           path: '.lighthouseci/'
 
       - name: Extract Lighthouse Metrics
-        id: lh-metrics
         run: |
-          # Читаем последний отчёт
+          mkdir -p docs
+          
+          # Проверяем, что отчёт существует
+          if [ ! -f .lighthouseci/lhr-*.json ]; then
+            echo "::error::No Lighthouse report found!"
+            exit 1
+          fi
+          
+          # Извлекаем метрики с проверкой ошибок
           REPORT=$(ls -t .lighthouseci/lhr-*.json | head -1)
+          PERFORMANCE=$(jq -r '.categories.performance.score? // 0 | . * 100 | floor' "$REPORT")
+          ACCESSIBILITY=$(jq -r '.categories.accessibility.score? // 0 | . * 100 | floor' "$REPORT")
+          BEST_PRACTICES=$(jq -r '.categories["best-practices"].score? // 0 | . * 100 | floor' "$REPORT")
+          SEO=$(jq -r '.categories.seo.score? // 0 | . * 100 | floor' "$REPORT")
           
-          # Извлекаем все ключевые метрики
-          PERFORMANCE=$(jq -r '.categories.performance.score * 100 | floor' $REPORT)
-          ACCESSIBILITY=$(jq -r '.categories.accessibility.score * 100 | floor' $REPORT)
-          BEST_PRACTICES=$(jq -r '.categories["best-practices"].score * 100 | floor' $REPORT)
-          SEO=$(jq -r '.categories.seo.score * 100 | floor' $REPORT)
+          # Генерируем JSON с проверкой
+          echo "{
+            \"performance\": $PERFORMANCE,
+            \"accessibility\": $ACCESSIBILITY,
+            \"best_practices\": $BEST_PRACTICES,
+            \"seo\": $SEO
+          }" > docs/lighthouse-metrics.json
           
-          # Сохраняем в outputs
-          echo "performance=${PERFORMANCE}" >> $GITHUB_OUTPUT
-          echo "accessibility=${ACCESSIBILITY}" >> $GITHUB_OUTPUT
-          echo "best_practices=${BEST_PRACTICES}" >> $GITHUB_OUTPUT
-          echo "seo=${SEO}" >> $GITHUB_OUTPUT
-          
-          # Генерируем JSON для бейджа
-          echo '{
-            "performance": '$PERFORMANCE',
-            "accessibility": '$ACCESSIBILITY',
-            "best_practices": '$BEST_PRACTICES',
-            "seo": '$SEO'
-          }' > docs/lighthouse-metrics.json
-
+          # Дополнительная проверка файла
+          if ! jq empty docs/lighthouse-metrics.json 2>/dev/null; then
+            echo "::error::Invalid JSON generated!"
+            echo "{\"error\":\"invalid_data\"}" > docs/lighthouse-metrics.json
+          fi
+      - name: Validate JSON
+        run: |
+          echo "Проверяем файл метрик:"
+          cat docs/lighthouse-metrics.json
+          if ! jq empty docs/lighthouse-metrics.json; then
+            echo "::error::Invalid JSON file!"
+            exit 1
+          fi
       - name: Save Score to Pages
         run: |
           mkdir -p docs
