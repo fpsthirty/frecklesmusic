@@ -5,7 +5,7 @@
 Сайт для интерактивных чат-команд на площадках музыкального стрима **frecklesmusic**: <br>
 клавиши, гитара, loop-станция, вокал.
 
-# Code Quality
+### Code Quality
 <!-- Эти бейджи обновляются автоматически при пуше коммита, не редактировать вручную -->
 ![Perf](https://img.shields.io/badge/dynamic/json?url=https://fpsthirty.github.io/frecklesmusic/docs/lighthouse-score.json&label=Performance&query=$.performance&suffix=%25&color=blue)
 ![A11Y](https://img.shields.io/badge/dynamic/json?url=https://fpsthirty.github.io/frecklesmusic/docs/lighthouse-score.json&label=Accessibility&query=$.accessibility&suffix=%25&color=green)
