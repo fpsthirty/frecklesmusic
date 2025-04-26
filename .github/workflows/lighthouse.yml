@@ -28,29 +28,32 @@ jobs:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Extract Lighthouse Hash
         id: lh-hash
-        continue-on-error: true  # Продолжать даже при ошибке
         run: |
-          # Устанавливаем jq если нужно
-          command -v jq >/dev/null || sudo apt-get install -y jq
-          
-          # Парсим хеш
-          HASH=$(cat .lighthouseci/manifest.json 2>/dev/null | jq -r '.hash' || true)
-          
-          if [ -z "$HASH" ]; then
-            echo "::warning::Hash not found in manifest.json, trying logs..."
-            HASH=$(grep -oP 'reports\/\K[^/]+' .lighthouseci/log-*.json 2>/dev/null | head -1 || true)
-          fi
-          
-          echo "hash=${HASH:-default}" >> $GITHUB_OUTPUT
+          # Извлекаем хеш из URL в логах
+          HASH=$(grep -oP 'reports\/\K[^/]+(?=\.report\.html)' ./lighthouseci/log-*.json)
+          echo "hash=${HASH}" >> $GITHUB_OUTPUT
 
-      - name: Upload Lighthouse Report
+      - name: Update Badge in README
+        uses: actions/github-script@v7
+        env:
+          HASH: ${{ steps.lh-hash.outputs.hash }}
+        with:
+          script: |
+            const fs = require('fs');
+            const readmePath = './README.md';
+            let readme = fs.readFileSync(readmePath, 'utf8');
+
+            readme = readme.replace(
+              /https:\/\/storage\.googleapis\.com\/lighthouse-infrastructure\.appspot\.com\/reports\/[^/]+\.report\.json/g,
+              `https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/${process.env.HASH}.report.json`
+            );
+
+            fs.writeFileSync(readmePath, readme);
+      - name: Upload Permanent Report
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-report
-          path: |
-            .lighthouseci/
-            !.lighthouseci/**/manifest.json  # Исключаем ненужные файлы
-          retention-days: 1  # Автоочистка через 1 день
+          name: lighthouse-report-${{ steps.lh-hash.outputs.hash }}
+          path: .lighthouseci/
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
