@@ -3,7 +3,8 @@
     "collect": {
       "url": ["https://fpsthirty.github.io/frecklesmusic/"],
       "numberOfRuns": 1,
-      "outputDir": ".lighthouseci"
+      "outputDir": ".lighthouseci",
+      "settings": { "output": "json" }
     },
     "upload": {
       "target": "temporary-public-storage"

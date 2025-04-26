@@ -7,6 +7,6 @@
 
 # Code Quality
 
-[![Lighthouse](https://img.shields.io/badge/dynamic/json?url=https://fpsthirty.github.io/frecklesmusic/latest-report.json&label=Lighthouse&query=$.categories.*.score&logo=google-chrome&color=blue)](https://fpsthirty.github.io/frecklesmusic)
+[![Lighthouse](https://img.shields.io/badge/dynamic/json?url=https://fpsthirty.github.io/frecklesmusic/lighthouse-score.txt&label=Lighthouse&query=$.score&suffix=%&logo=lighthouse&color=blue)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/lighthouse.yml)
 [![W3C Validation](https://img.shields.io/w3c-validation/default?targetUrl=https%3A%2F%2Fexample.com)](https://validator.w3.org/)
 [![ESLint](https://img.shields.io/badge/ESLint-passing-brightgreen)](https://eslint.org/)

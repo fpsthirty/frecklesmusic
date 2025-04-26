@@ -54,23 +54,6 @@ jobs:
             echo "hash=error" >> $GITHUB_OUTPUT
           fi
 
-      - name: Update Badge in README
-        uses: actions/github-script@v7
-        env:
-          HASH: ${{ steps.lh-hash.outputs.hash }}
-        with:
-          script: |
-            const fs = require('fs');
-            const readmePath = './README.md';
-            let readme = fs.readFileSync(readmePath, 'utf8');
-
-            readme = readme.replace(
-              /https:\/\/storage\.googleapis\.com\/lighthouse-infrastructure\.appspot\.com\/reports\/[^/]+\.report\.json/g,
-              `https://storage.googleapis.com/lighthouse-infrastructure.appspot.com/reports/${process.env.HASH}.report.json`
-            );
-
-            fs.writeFileSync(readmePath, readme);
-
       - name: Prepare Lighthouse Artifacts
         run: |
           mkdir -p lighthouse-artifacts
@@ -97,3 +80,15 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: '.lighthouseci/'
+
+      - name: Extract Lighthouse Score
+        id: lh-score
+        run: |
+          SCORE=$(jq -r '[.categories[]?.score? // 0 | . * 100 | floor] | max' .lighthouseci/lhr-*.json)
+          echo "score=${SCORE}" >> $GITHUB_OUTPUT
+
+      - name: Save Score to Pages
+        run: |
+          mkdir -p docs
+          echo ${{ steps.lh-score.outputs.score }} > docs/lighthouse-score.txt
+        if: success()
