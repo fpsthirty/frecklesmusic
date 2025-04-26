@@ -27,32 +27,31 @@ jobs:
         run: sudo apt-get install -y jq
       
       - name: Run Lighthouse CI
+        id: run-lhci
         run: |
-          lhci autorun --config=./lighthouserc.json || echo "::warning::Lighthouse run completed (hash may be missing)"
+          # Запускаем Lighthouse и сохраняем логи в файл
+          lhci autorun --config=./lighthouserc.json 2>&1 | tee ./lighthouse-output.log || echo "::warning::Lighthouse run completed"
+        
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract Lighthouse Hash
         id: lh-hash
         run: |
-          # Ищем URL отчета в логах Lighthouse CI
-          REPORT_URL=$(grep -oP 'https://storage\.googleapis\.com/lighthouse-infrastructure\.appspot\.com/reports/[0-9-]+\.report\.html' ./lighthouseci/console-log.txt || true)
+          # Читаем лог из файла и ищем URL
+          REPORT_URL=$(grep -o 'https://storage\.googleapis\.com/lighthouse-infrastructure\.appspot\.com/reports/[0-9-]\+\.report\.html' ./lighthouse-output.log || true)
           
-          # Если URL найден, извлекаем хэш
           if [ -n "$REPORT_URL" ]; then
-            HASH=$(echo "$REPORT_URL" | grep -oP 'reports/\K[0-9-]+(?=\.report\.html)')
+            # Извлекаем хеш из URL
+            HASH=$(echo "$REPORT_URL" | sed 's|.*/reports/\([0-9-]*\)\.report\.html|\1|')
             echo "hash=${HASH}" >> $GITHUB_OUTPUT
-            echo "Found Lighthouse hash: ${HASH}"
+            echo "Extracted Lighthouse hash: ${HASH}"
+            
+            # Дополнительно сохраняем хеш в файл
+            echo "${HASH}" > ./lighthouse-hash.txt
           else
-            # Альтернативный поиск в других логах
-            HASH=$(grep -oP 'View report at:.*reports/\K[0-9-]+' .lighthouseci/*.log || true)
-            if [ -n "$HASH" ]; then
-              echo "hash=${HASH}" >> $GITHUB_OUTPUT
-              echo "Found Lighthouse hash (alternative method): ${HASH}"
-            else
-              echo "::warning::Lighthouse report URL not found in logs!"
-              echo "hash=not-found" >> $GITHUB_OUTPUT
-            fi
+            echo "::error::Failed to extract Lighthouse report URL!"
+            echo "hash=error" >> $GITHUB_OUTPUT
           fi
 
       - name: Update Badge in README
@@ -77,7 +76,7 @@ jobs:
         with:
           name: lighthouse-report-${{ steps.lh-hash.outputs.hash }}
           path: .lighthouseci/
-      
+
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
