@@ -6,9 +6,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Validate HTML
-        uses: docker://cycjimmy/w3c-validator-action:latest
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          url: 'https://fpsthirty.github.io/frecklesmusic/'
-          ignore-warnings: true
+          node-version: 18
+      
+      - name: Install W3C Validator
+        run: npm install -g w3c-html-validator
+      
+      - name: Validate HTML
+        run: |
+          validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
+          echo "W3C results saved to docs/w3c-results.json"
+      - name: Validate Local Files
+        run: |
+          find . -name "*.html" -exec validator --verbose {} \;
