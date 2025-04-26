@@ -12,42 +12,48 @@ jobs:
         run: |
           echo "Список доступных версий:"
           curl -s https://api.github.com/repos/actions/upload-artifact/tags | jq -r '.[].name'
+      
       - uses: actions/checkout@v4
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 18
+      
       - name: Install Lighthouse CI
         run: npm install -g @lhci/cli
+      
       - name: Install jq
         run: sudo apt-get install -y jq
+      
       - name: Run Lighthouse CI
         run: |
           lhci autorun --config=./lighthouserc.json || echo "::warning::Lighthouse run completed (hash may be missing)"
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        - name: Extract Lighthouse Hash
-          id: lh-hash
-          run: |
-            # Ищем URL отчета в логах Lighthouse CI
-            REPORT_URL=$(grep -oP 'https://storage\.googleapis\.com/lighthouse-infrastructure\.appspot\.com/reports/[0-9-]+\.report\.html' ./lighthouseci/console-log.txt || true)
-            
-            # Если URL найден, извлекаем хэш
-            if [ -n "$REPORT_URL" ]; then
-              HASH=$(echo "$REPORT_URL" | grep -oP 'reports/\K[0-9-]+(?=\.report\.html)')
+
+      - name: Extract Lighthouse Hash
+        id: lh-hash
+        run: |
+          # Ищем URL отчета в логах Lighthouse CI
+          REPORT_URL=$(grep -oP 'https://storage\.googleapis\.com/lighthouse-infrastructure\.appspot\.com/reports/[0-9-]+\.report\.html' ./lighthouseci/console-log.txt || true)
+          
+          # Если URL найден, извлекаем хэш
+          if [ -n "$REPORT_URL" ]; then
+            HASH=$(echo "$REPORT_URL" | grep -oP 'reports/\K[0-9-]+(?=\.report\.html)')
+            echo "hash=${HASH}" >> $GITHUB_OUTPUT
+            echo "Found Lighthouse hash: ${HASH}"
+          else
+            # Альтернативный поиск в других логах
+            HASH=$(grep -oP 'View report at:.*reports/\K[0-9-]+' .lighthouseci/*.log || true)
+            if [ -n "$HASH" ]; then
               echo "hash=${HASH}" >> $GITHUB_OUTPUT
-              echo "Found Lighthouse hash: ${HASH}"
+              echo "Found Lighthouse hash (alternative method): ${HASH}"
             else
-              # Альтернативный поиск в других логах
-              HASH=$(grep -oP 'View report at:.*reports/\K[0-9-]+' .lighthouseci/*.log || true)
-              if [ -n "$HASH" ]; then
-                echo "hash=${HASH}" >> $GITHUB_OUTPUT
-                echo "Found Lighthouse hash (alternative method): ${HASH}"
-              else
-                echo "::warning::Lighthouse report URL not found in logs!"
-                echo "hash=not-found" >> $GITHUB_OUTPUT
-              fi
+              echo "::warning::Lighthouse report URL not found in logs!"
+              echo "hash=not-found" >> $GITHUB_OUTPUT
             fi
+          fi
 
       - name: Update Badge in README
         uses: actions/github-script@v7
@@ -65,11 +71,13 @@ jobs:
             );
 
             fs.writeFileSync(readmePath, readme);
+
       - name: Upload Permanent Report
         uses: actions/upload-artifact@v4
         with:
           name: lighthouse-report-${{ steps.lh-hash.outputs.hash }}
           path: .lighthouseci/
+      
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
