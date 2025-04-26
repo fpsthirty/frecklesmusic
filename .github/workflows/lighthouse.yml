@@ -8,6 +8,10 @@ jobs:
   lighthouse:
     runs-on: ubuntu-latest
     steps:
+      - name: Update Actions
+        run: |
+          echo "Список доступных версий:"
+          curl -s https://api.github.com/repos/actions/upload-artifact/tags | jq -r '.[].name'
       - uses: actions/checkout@v4
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -39,11 +43,14 @@ jobs:
           
           echo "hash=${HASH:-default}" >> $GITHUB_OUTPUT
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+      - name: Upload Lighthouse Report
+        uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-reports
-          path: .lighthouseci/
+          name: lighthouse-report
+          path: |
+            .lighthouseci/
+            !.lighthouseci/**/manifest.json  # Исключаем ненужные файлы
+          retention-days: 1  # Автоочистка через 1 день
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
