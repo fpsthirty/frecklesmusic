@@ -13,12 +13,21 @@ jobs:
           node-version: 18
       
       - name: Install W3C Validator
-        run: npm install -g w3c-html-validator
+        run: npm install -g w3c-html-validator @types/w3c-html-validator
       
       - name: Validate HTML
         run: |
-          validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
-          echo "W3C results saved to docs/w3c-results.json"
-      - name: Validate Local Files
-        run: |
-          find . -name "*.html" -exec validator --verbose {} \;
+          npx w3c-html-validator --verbose --output=json https://fpsthirty.github.io/frecklesmusic/ > docs/w3c-results.json
+          echo "Results saved to docs/w3c-results.json"
+          
+          # Проверка ошибок
+          if jq -e '.messages[] | select(.type == "error")' docs/w3c-results.json >/dev/null; then
+            echo "::error::W3C validation errors found!"
+            exit 1
+          fi
+      
+      - name: Upload Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: w3c-validation-results
+          path: docs/w3c-results.json
