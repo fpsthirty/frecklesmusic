@@ -25,31 +25,36 @@ jobs:
         uses: actions/github-script@v6
         env:
           GIST_ID: "6d9dd6bdaeecff45b56e0baee799ed2e"
-          GH_PAT: ${{ secrets.GH_PAT }}  # Используем персональный токен
         with:
+          github-token: ${{ secrets.GH_PAT }}
           script: |
-            try {
-              const result = "${{ steps.eslint-check.outputs.result }}";
-              const isPassing = result === 'success';
-              
-              # Создаем экземпляр GitHub с кастомным токеном; создаётся здесь: https://github.com/settings/tokens , используется здесь: https://github.com/fpsthirty/frecklesmusic/settings/secrets/actions
-              const githubWithToken = new github.GitHub(process.env.GH_PAT);
+            // Получаем результат ESLint
+            const result = "${{ steps.eslint-check.outputs.result }}";
+            console.log(`ESLint result: ${result}`);
 
-              await githubWithToken.rest.gists.update({
+            // Подготавливаем данные для Gist
+            const badgeData = {
+              schemaVersion: 1,
+              label: "ESLint",
+              message: result === 'success' ? "valid" : "invalid",
+              color: result === 'success' ? "brightgreen" : "red"
+            };
+
+            try {
+              // Обновляем Gist
+              const response = await github.rest.gists.update({
                 gist_id: process.env.GIST_ID,
                 files: {
                   'frecklesmusic-eslint-badge.json': {
-                    content: JSON.stringify({
-                      schemaVersion: 1,
-                      label: "ESLint",
-                      message: isPassing ? "valid" : "invalid",
-                      color: isPassing ? "brightgreen" : "red",
-                    })
+                    content: JSON.stringify(badgeData, null, 2)  // Красивое форматирование
                   }
                 }
               });
-              console.log('Gist updated successfully!');
+
+              console.log('Gist успешно обновлен!');
+              console.log(`Статус: ${badgeData.message}`);
             } catch (error) {
-              console.error('Gist update failed:', error);
-              throw error;
+              console.error('Ошибка при обновлении Gist:');
+              console.error(error);
+              throw new Error('Не удалось обновить Gist');
             }
