@@ -8,12 +8,22 @@ on:
 jobs:
   eslint:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      gists: write
+      
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
       - run: npm ci
+      
+      - name: Debug Gist Access
+          run: |
+            echo "GIST_ID: $GIST_ID"
+            curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/gists/$GIST_ID" | jq '.files'
 
       - name: Run ESLint
         id: eslint-check
@@ -28,19 +38,25 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            const result = "${{ steps.eslint-check.outputs.result }}";  // Используем outputs
-            const isPassing = result === 'success';
-            
-            await github.rest.gists.update({
-              gist_id: process.env.GIST_ID,
-              files: {
-                'frecklesmusic-eslint-badge.json': {
-                  content: JSON.stringify({
-                    schemaVersion: 1,
-                    label: "ESLint",
-                    message: isPassing ? "valid" : "invalid",
-                    color: isPassing ? "brightgreen" : "red",
-                  })
+            try {
+              const result = "${{ steps.eslint-check.outputs.result }}";
+              const isPassing = result === 'success';
+              
+              await github.rest.gists.update({
+                gist_id: process.env.GIST_ID,
+                files: {
+                  'frecklesmusic-eslint-badge.json': {
+                    content: JSON.stringify({
+                      schemaVersion: 1,
+                      label: "ESLint",
+                      message: isPassing ? "valid" : "invalid",
+                      color: isPassing ? "brightgreen" : "red",
+                    })
+                  }
                 }
-              }
-            });
+              });
+              console.log('Gist updated successfully!');
+            } catch (error) {
+              console.error('Gist update failed:', error);
+              throw error;
+            }
