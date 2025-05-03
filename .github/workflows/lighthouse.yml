@@ -1,4 +1,4 @@
-name: Lighthouse
+name: Lighthouse Analyze
 on:
   push:
     branches: [ main ]  # Запуск при push в main

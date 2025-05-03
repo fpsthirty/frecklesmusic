@@ -1,4 +1,4 @@
-name: W3C Validation
+name: W3C Analyze
 on: [push]
 
 jobs:

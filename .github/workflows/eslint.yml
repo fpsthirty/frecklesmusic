@@ -1,4 +1,4 @@
-name: ESLint Check
+name: ESLint Analyze
 on:
   push:
     branches: [ "main" ]

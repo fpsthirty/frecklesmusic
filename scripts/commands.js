@@ -226,7 +226,7 @@ const commands = [
 
 // Функция для извлечения эмоджи из строки команды
 function extractEmoji(commandText) {
-  const emojiMatch = commandText.match(/[^\w\s!\/-][\uFE0F]?/gu);
+  const emojiMatch = commandText.match(/[^\w\s!/-][\uFE0F]?/gu);
   return emojiMatch ? emojiMatch[emojiMatch.length - 1] : null;
 }
 

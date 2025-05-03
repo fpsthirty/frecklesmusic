@@ -22,7 +22,6 @@ function applySavedTheme() {
 function updateThemeButton() {
   const body = document.body;
   const themeToggleButton = document.querySelector('.theme-toggle');
-  const themeTextSpan = document.querySelector('.theme-text');
 
   if (body.classList.contains('light-theme')) {
     if (window.innerWidth >= 768) {
@@ -80,13 +79,19 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-/* десктоп: спустя 10сек после открытия сайта скрываем кнопку до тех пор, пока пользователь не наведёт курсор на хеадер */
+// Вешаем логику смены темы на соответствующую кнопку
+document.addEventListener('DOMContentLoaded', () => {
+  const buttonThemeToggle = document.querySelector('.theme-toggle');
+  if (buttonThemeToggle) {
+    buttonThemeToggle.addEventListener('click', toggleTheme);
+  }
+});
 
 document.addEventListener('DOMContentLoaded', function() {
   const themeToggle = document.querySelector('.theme-toggle');
   const header = document.querySelector('header');
   const isDesktop = window.innerWidth >= 1024;
-  const INITIAL_DELAY = 10000; // 10 секунд
+  const INITIAL_DELAY = 10000; // спустя 10сек после открытия сайта скрываем кнопку .theme-toggle до тех пор, пока пользователь не наведёт курсор на хеадер
 
   let initialTimer;
   let isInitialPeriod = true;

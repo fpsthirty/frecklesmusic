@@ -2,5 +2,12 @@
   "extends": ["eslint:recommended"],
   "rules": {
     "no-console": "warn"
+  },
+  "globals": {
+    "toggleTheme": "readonly", // Указываем, что функция используется глобально
+  },
+  "parserOptions": {
+    "sourceType": "module",
+    "ecmaVersion": 2022
   }
 }
