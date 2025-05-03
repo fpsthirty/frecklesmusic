@@ -128,7 +128,7 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add docs/lighthouse-score.json
-          git commit -m "Update Lighthouse score: ${{ steps.lh-score.outputs.score }}%" || echo "No changes"
+          git commit -m "Update Lighthouse score $(Get-Date -Format 'dd-MM-yy HH:mm')" || echo "No changes"
           git push
         if: success()
       - name: Debug score after updating

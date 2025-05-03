@@ -203,10 +203,69 @@ footer {
   padding: 1rem 1rem 2rem 1rem;
   font-size: 0.9rem;
   color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 }
 
 footer.light-theme {
   color: #333;
+}
+
+footer a.github-link {
+  text-decoration: none;
+  position: relative;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+footer a.github-link::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: -1px;
+  left: 0;
+  background-color: currentColor;
+  transform-origin: bottom;
+  opacity: 0;
+  transition: 
+    transform 0.3s ease, 
+    opacity 0.3s ease,
+    bottom 0.5s ease;
+}
+
+footer a.github-link:hover::after {
+  opacity: 1;
+}
+
+
+footer.light-theme a.github-link {
+  color: #333;
+}
+
+.icon-github {
+  display: flex;
+  align-items: center;
+}
+
+.icon-github img {
+  vertical-align: middle;
+  cursor: pointer;
+  opacity: 0.8;
+  transition:
+    opacity 0.3s ease;
+}
+
+footer.light-theme .icon-github img {
+  opacity: 0.7;
+}
+
+.icon-github img:hover {
+  vertical-align: middle;
+  cursor: pointer;
+  opacity: 0.4 !important;
 }
 
 .theme-toggle {
@@ -410,10 +469,14 @@ footer.light-theme {
   color: white;
 }
 
+.icon-github {
+  position: relative;
+  top: 50%;
+}
 /* -----------------
  @media-запросы
 ----------------- */
-  /* Для мобильных */
+/* Для мобильных */
   @media (max-width: 767px) {
     .theme-toggle {
       top: 0;
@@ -482,7 +545,19 @@ footer.light-theme {
     padding-left: 20%;
     max-width: 300px;
   }
+
+  .icon-github img {
+    position: relative;
+    top: -0.75rem;
+    left: 0.5rem;
+  }
+
+  .footer-description {
+    max-width: 300px;
+  }
 }
+
+/* --------------------------------- */
 
 /* Для мобильных и планшетов */
 @media (max-width: 1180px) {
@@ -497,19 +572,37 @@ footer.light-theme {
   .command {
     text-align: center;
   }
+
+  footer a.github-link {
+    text-decoration: underline;
+  }
+
+  .footer-description {
+    max-width: 300px;
+  }
 }
+
+/* --------------------------------- */
 
 /* Планшетная версия: два столбца */
 @media (min-width: 768px) and (max-width: 1180px) {
   .command-list {
     grid-template-columns: repeat(2, 1fr); /* Два столбца для планшетов */
   }
+
+  .footer-description {
+    max-width: 600px;
+  }
 }
+
+/* --------------------------------- */
 
 /* Стили для планшетов и десктопов */
 @media (min-width: 768px) {
 
 }
+
+/* --------------------------------- */
 
 /* ПК версия: три столбца */
 @media (min-width: 1180px) {
