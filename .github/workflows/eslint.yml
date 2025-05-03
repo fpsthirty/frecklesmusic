@@ -8,12 +8,6 @@ on:
 jobs:
   eslint:
     runs-on: ubuntu-latest
-    
-    # Правильный формат permissions (должен быть на одном уровне с runs-on)
-    permissions:
-      contents: read
-      gists: write  # Право на запись в Gist
-    
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -31,14 +25,17 @@ jobs:
         uses: actions/github-script@v6
         env:
           GIST_ID: "6d9dd6bdaeecff45b56e0baee799ed2e"
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_PAT: ${{ secrets.GH_PAT }}  # Используем персональный токен
         with:
           script: |
             try {
               const result = "${{ steps.eslint-check.outputs.result }}";
               const isPassing = result === 'success';
               
-              await github.rest.gists.update({
+              # Создаем экземпляр GitHub с кастомным токеном; создаётся здесь: https://github.com/settings/tokens , используется здесь: https://github.com/fpsthirty/frecklesmusic/settings/secrets/actions
+              const githubWithToken = new github.GitHub(process.env.GH_PAT);
+
+              await githubWithToken.rest.gists.update({
                 gist_id: process.env.GIST_ID,
                 files: {
                   'frecklesmusic-eslint-badge.json': {
