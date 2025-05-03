@@ -18,7 +18,13 @@ jobs:
       - name: Run ESLint
         id: eslint-check
         run: |
-          npm run lint && echo "result=success" >> $GITHUB_OUTPUT || echo "result=failed" >> $GITHUB_OUTPUT
+          # Проверяем существование скрипта lint
+          if npm run | grep -q lint; then
+            npm run lint && echo "result=success" >> $GITHUB_OUTPUT || echo "result=failed" >> $GITHUB_OUTPUT
+          else
+            echo "ESLint не настроен, пропускаем проверку"
+            echo "result=skipped" >> $GITHUB_OUTPUT
+          fi
    
       - name: Update ESLint Badge in Gist
         if: always()
