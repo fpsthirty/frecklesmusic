@@ -14,20 +14,22 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
+
       - name: Run ESLint
-        id: run-eslint
-        run: npm run lint || echo "::set-output name=status::failed"
-        
+        id: eslint-check
+        run: |
+          npm run lint && echo "result=success" >> $GITHUB_OUTPUT || echo "result=failed" >> $GITHUB_OUTPUT
+   
       - name: Update ESLint Badge in Gist
         if: always()
         uses: actions/github-script@v6
         env:
-          GIST_ID: 6d9dd6bdaeecff45b56e0baee799ed2e
+          GIST_ID: "6d9dd6bdaeecff45b56e0baee799ed2e"
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            const { status } = steps.run-eslint.outcome;
-            const isPassing = status === 'success';
+            const result = "${{ steps.eslint-check.outputs.result }}";  // Используем outputs
+            const isPassing = result === 'success';
             
             await github.rest.gists.update({
               gist_id: process.env.GIST_ID,
