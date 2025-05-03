@@ -1,0 +1,44 @@
+name: ESLint Check
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm ci
+      - name: Run ESLint
+        id: run-eslint
+        run: npm run lint || echo "::set-output name=status::failed"
+        
+      - name: Update ESLint Badge in Gist
+        if: always()
+        uses: actions/github-script@v6
+        env:
+          GIST_ID: 6d9dd6bdaeecff45b56e0baee799ed2e
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          script: |
+            const { status } = steps.run-eslint.outcome;
+            const isPassing = status === 'success';
+            
+            await github.rest.gists.update({
+              gist_id: process.env.GIST_ID,
+              files: {
+                'frecklesmusic-eslint-badge.json': {
+                  content: JSON.stringify({
+                    schemaVersion: 1,
+                    label: "ESLint",
+                    message: isPassing ? "valid" : "invalid",
+                    color: isPassing ? "brightgreen" : "red",
+                  })
+                }
+              }
+            });
