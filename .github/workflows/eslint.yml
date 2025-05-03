@@ -18,9 +18,9 @@ jobs:
         with:
           node-version: '20'
       - run: npm ci
-      
+
       - name: Debug Gist Access
-          run: |
+        run: |
             echo "GIST_ID: $GIST_ID"
             curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
               "https://api.github.com/gists/$GIST_ID" | jq '.files'
