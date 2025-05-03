@@ -8,22 +8,18 @@ on:
 jobs:
   eslint:
     runs-on: ubuntu-latest
+    
+    # Правильный формат permissions (должен быть на одном уровне с runs-on)
     permissions:
       contents: read
-      gists: write
-      
+      gists: write  # Право на запись в Gist
+    
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
       - run: npm ci
-
-      - name: Debug Gist Access
-        run: |
-            echo "GIST_ID: $GIST_ID"
-            curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-              "https://api.github.com/gists/$GIST_ID" | jq '.files'
 
       - name: Run ESLint
         id: eslint-check
