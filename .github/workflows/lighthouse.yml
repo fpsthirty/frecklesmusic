@@ -33,23 +33,35 @@ jobs:
         id: extract-metrics
         run: |
           mkdir -p docs
-          
+
           if [ ! -f .lighthouseci/lhr-*.json ]; then
             echo "::error::No Lighthouse report found!"
             exit 1
           fi
-          
+
           REPORT=$(ls -t .lighthouseci/lhr-*.json | head -1)
+
+          # Сначала извлекаем все значения в переменные
+          PERFORMANCE=$(jq -r '.categories.performance.score * 100 | floor' "$REPORT")
+          ACCESSIBILITY=$(jq -r '.categories.accessibility.score * 100 | floor' "$REPORT")
+          BEST_PRACTICES=$(jq -r '.categories["best-practices"].score * 100 | floor' "$REPORT")
+          SEO=$(jq -r '.categories.seo.score * 100 | floor' "$REPORT")
+          TIMESTAMP=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+          # Формируем JSON с проверкой значений
           echo "{
-            \"performance\": $(jq -r '.categories.performance.score * 100 | floor' "$REPORT"),
-            \"accessibility\": $(jq -r '.categories.accessibility.score * 100 | floor' "$REPORT"),
-            \"best_practices\": $(jq -r '.categories[\"best-practices\"].score * 100 | floor' "$REPORT"),
-            \"seo\": $(jq -r '.categories.seo.score * 100 | floor' "$REPORT"),
-            \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"
+            \"performance\": ${PERFORMANCE:-0},
+            \"accessibility\": ${ACCESSIBILITY:-0},
+            \"best_practices\": ${BEST_PRACTICES:-0},
+            \"seo\": ${SEO:-0},
+            \"timestamp\": \"${TIMESTAMP}\"
           }" > docs/lighthouse-metrics.json
-          
+
+          # Валидация JSON
           if ! jq empty docs/lighthouse-metrics.json 2>/dev/null; then
             echo "::error::Invalid JSON generated!"
+            echo "Содержимое файла:"
+            cat docs/lighthouse-metrics.json
             exit 1
           fi
 
