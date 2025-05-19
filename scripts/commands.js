@@ -17,22 +17,22 @@ async function loadCommands() {
     console.error('Error loading commands:', error);
     // fallback-команды, подгружаемые по умолчанию
     commands = [
-      { command: "!bass 📽️" },
-      { command: "!cartoon 📽️" },
-      { command: "!colors 📽️" },
-      { command: "!duhota/духота 📽️" },
-      { command: "!goodnight 📽️" },
-      { command: "!horror/страшно/ужас 📽️" },
-      { command: "!minecraft 📽️" },
-      { command: "!munch 📽️" },
-      { command: "!sunshine 📽️" },
-      { command: "!predator 📽️" },
-      { command: "!pulse/пульс 📽️" },
-      { command: "!дождь/боль/rain 📽️" },
-      { command: "!tv 📽️" },
-      { command: "!грибы 📽️" },
-      { command: "!fire 📽️" },
-      { command: "!stars/sky/добройночи/звёзды 📽️" }
+      { command: "!bass 📽️" },
+      { command: "!cartoon 📽️" },
+      { command: "!colors 📽️" },
+      { command: "!duhota/духота 📽️" },
+      { command: "!goodnight 📽️" },
+      { command: "!horror/страшно/ужас 📽️" },
+      { command: "!minecraft 📽️" },
+      { command: "!munch 📽️" },
+      { command: "!sunshine 📽️" },
+      { command: "!predator 📽️" },
+      { command: "!pulse/пульс 📽️" },
+      { command: "!дождь/боль/rain 📽️" },
+      { command: "!tv 📽️" },
+      { command: "!грибы 📽️" },
+      { command: "!fire 📽️" },
+      { command: "!stars/sky/добройночи/звёзды 📽️" }
     ];
     initializeApp();
   }
@@ -141,7 +141,7 @@ function generateCommandBlocks(commands) {
 
   filteredCommands.forEach((cmd) => {
     const commandText = typeof cmd === 'string' ? cmd : cmd.command;
-    const commandName = commandText.split('/')[0].split(" ")[0];
+    const commandName = commandText.split('/')[0].split(" ")[0];
     const description = typeof cmd === 'string' ? '' : cmd.description || '';
 
     const block = document.createElement("div");
