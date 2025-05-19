@@ -1,224 +1,54 @@
 // ----------------------
-// набор данных
-// ----------------------
-
-// ----------------------
 // глобальные переменные
 // ----------------------
-
 let activeEmoji = null;
+let commands = []; // заполняется на основе data/commands.json
 
-// Массив команд
-const commands = [
+// ----------------------
+// загрузка данных
+// ----------------------
+async function loadCommands() {
+  try {
+    const response = await fetch('data/commands.json');
+    if (!response.ok) throw new Error('Failed to load commands');
+    commands = await response.json();
+    initializeApp();
+  } catch (error) {
+    console.error('Error loading commands:', error);
+    // fallback-команды, подгружаемые по умолчанию
+    commands = [
+      { command: "!bass 📽️" },
+      { command: "!cartoon 📽️" },
+      { command: "!colors 📽️" },
+      { command: "!duhota/духота 📽️" },
+      { command: "!goodnight 📽️" },
+      { command: "!horror/страшно/ужас 📽️" },
+      { command: "!minecraft 📽️" },
+      { command: "!munch 📽️" },
+      { command: "!sunshine 📽️" },
+      { command: "!predator 📽️" },
+      { command: "!pulse/пульс 📽️" },
+      { command: "!дождь/боль/rain 📽️" },
+      { command: "!tv 📽️" },
+      { command: "!грибы 📽️" },
+      { command: "!fire 📽️" },
+      { command: "!stars/sky/добройночи/звёзды 📽️" }
+    ];
+    initializeApp();
+  }
+}
 
-  {
-    command: "!bass 📽️",
-  },
-  {
-    command: "!cartoon 📽️",
-  },
-  {
-    command: "!colors 📽️",
-  },
-  {
-    command: "!duhota/духота 📽️",
-  },
-  {
-    command: "!goodnight 📽️",
-  },
-  {
-    command: "!horror/страшно/ужас 📽️",
-  },
-  {
-    command: "!minecraft 📽️",
-  },
-  {
-    command: "!munch 📽️",
-  },
-  {
-    command: "!sunshine 📽️",
-  },
-  {
-    command: "!predator 📽️",
-  },
-  {
-    command: "!pulse/пульс 📽️",
-  },
-  {
-    command: "!дождь/боль/rain 📽️",
-  },
-  {
-    command: "!tv 📽️",
-  },
-  {
-    command: "!грибы 📽️",
-  },
-  {
-    command: "!clap 👏",
-  },
-  {
-    command: "!clap1 👏",
-  },
-  {
-    command: "!clap2 👏",
-  },
-  {
-    command: "!clap3 👏",
-  },
-  {
-    command: "!clap4 👏",
-  },
-  {
-    command: "!clap5 👏",
-  },
-  {
-    command: "!clap6 👏",
-  },
-  {
-    command: "!clap7 👏",
-  },
-  {
-    command: "!clap8 👏",
-  },
-  {
-    command: "!clap9 👏",
-  },
-  {
-    command: "!clap10 👏",
-  },
-  {
-    command: "!clap11 👏",
-  },
-  {
-    command: "!clap12 👏",
-  },
-  {
-    command: "!вжух 🎉",
-  },
-  {
-    command: "!вжух2 🎉",
-  },
-  {
-    command: "!вжух3 🎉",
-  },
-  {
-    command: "!вжух4 🎉",
-  },
-  {
-    command: "!вжух5 🎉",
-  },
-  {
-    command: "!вжух6 🎉",
-  },
-  {
-    command: "!вжух7 🎉",
-  },
-  {
-    command: "!вжух8 🎉",
-  },
-  {
-    command: "!вжух9 🎉",
-  },
-  {
-    command: "!вжух10 🎉",
-  },
-  {
-    command: "!вжух11 🎉",
-  },
-  {
-    command: "!цветы 💐",
-  },
-  {
-    command: "!цветы1 💐",
-  },
-  {
-    command: "!цветы2 💐",
-  },
-  {
-    command: "!цветы3 💐",
-  },
-  {
-    command: "!розы 💐",
-  },
-  {
-    command: "!клубника 💐",
-  },
-  {
-    command: "!ромашки 💐",
-  },
-  {
-    command: "!ромашка 💐",
-  },
-  {
-    command: "!весна 💐",
-  },
-  {
-    command: "!цветок 💐",
-  },
-  {
-    command: "!цветочек 💐",
-  },
-  {
-    command: "!осенний 🍁",
-  },
-  {
-    command: "!осень1 🍁",
-  },
-  {
-    command: "!fall1 🍁",
-  },
-  {
-    command: "!листья 🍁",
-  },
-  {
-    command: "!leaves 🍁",
-  },
-  {
-    command: "!autumn 🍁",
-  },
-  {
-    command: "!осень 🍁",
-  },
-  {
-    command: "!fall 🍁",
-  },
-  {
-    command: "!паук 🕷️",
-  },
-  {
-    command: "!паук1 🕷️",
-  },
-  {
-    command: "!паук2 🕷️",
-  },
-  {
-    command: "!паук3 🕷️",
-  },
-  {
-    command: "!паук4 🕷️",
-  },
-  {
-    command: "!паук5 🕷️",
-  },
-  {
-    command: "!паучок 🕷️",
-  },
-  {
-    command: "!бан/ban 🍲",
-  },
-  {
-    command: "!hearts/heart/сердце 🍲",
-  },
-  {
-    command: "!снег 🍲",
-  },
-  {
-    command: "!упёрдывай 🍲",
-  },
-  {
-    command: "!фигвам/figvam 🍲",
-  },
-];
+// ----------------------
+// инициализация приложения
+// ----------------------
+function initializeApp() {
+  const uniqueEmojis = getUniqueEmojis(commands);
+  createFilterButtons(uniqueEmojis);
+  generateCommandBlocks(commands);
+}
+
+// Получение команд при загрузке DOM
+document.addEventListener("DOMContentLoaded", loadCommands);
 
 // ----------------------
 // набор функций
@@ -244,6 +74,11 @@ function getUniqueEmojis(commands) {
 function createFilterButtons(emojis) {
   const filterContainer = document.createElement('div');
   filterContainer.className = 'emoji-filters-container';
+
+  // Добавляем класс темы (тёмная тема без класса)
+  if (document.body.classList.contains('light-theme')) {
+    filterContainer.classList.add('light-theme');
+  }
 
   // Добавляем кнопку "Все"
   const allButton = document.createElement('button');
@@ -398,17 +233,3 @@ function copyToClipboard(text) {
     }, 2000);
   });
 }
-
-// ----------------------
-// инициализация
-// ----------------------
-document.addEventListener("DOMContentLoaded", () => {
-  // Получаем уникальные эмоджи
-  const uniqueEmojis = getUniqueEmojis(commands);
-
-  // Создаем кнопки фильтрации
-  createFilterButtons(uniqueEmojis);
-
-  // Генерируем все команды
-  generateCommandBlocks(commands);
-});

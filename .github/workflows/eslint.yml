@@ -28,7 +28,7 @@ jobs:
         env:
           GIST_ID: "6d9dd6bdaeecff45b56e0baee799ed2e"
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ secrets.GH_PAT }} # сначала генерируем токен: https://github.com/settings/tokens, потом создаём переменную с токеном: https://github.com/fpsthirty/frecklesmusic/settings/secrets/actions
           script: |
             // Получаем результат ESLint
             const result = "${{ steps.eslint-check.outputs.result }}";
