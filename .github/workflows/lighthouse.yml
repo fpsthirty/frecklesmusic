@@ -69,7 +69,7 @@ jobs:
         if: always()
         uses: actions/github-script@v6
         env:
-          GIST_ID: "YOUR_GIST_ID_HERE"
+          GIST_ID: "7b7563c9fbf4e1164894f86ed4284c18"
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
@@ -100,9 +100,9 @@ jobs:
                 schemaVersion: 1,
                 label: "",
                 message: [
-                  `Perf: ${metrics.performance}`,
-                  `A11y: ${metrics.accessibility}`,
-                  `BP: ${metrics.best_practices}`,
+                  `performance: ${metrics.performance}`,
+                  `accessibility: ${metrics.accessibility}`,
+                  `best practices: ${metrics.best_practices}`,
                   `SEO: ${metrics.seo}`
                 ].join(' | '),
                 color: getColor(metrics.performance),
@@ -136,8 +136,10 @@ jobs:
             }
             
             function getColor(performanceScore) {
-              if (performanceScore >= 90) return 'brightgreen';
-              if (performanceScore >= 50) return 'yellow';
+              if (score >= 90) return 'brightgreen';
+              if (score >= 80) return 'green';
+              if (score >= 60) return 'yellow';
+              if (score >= 40) return 'orange';
               return 'red';
             }
             
