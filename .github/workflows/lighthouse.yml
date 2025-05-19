@@ -55,13 +55,13 @@ jobs:
             \"best_practices\": ${BEST_PRACTICES:-0},
             \"seo\": ${SEO:-0},
             \"timestamp\": \"${TIMESTAMP}\"
-          }" > docs/lighthouse-metrics.json
+          }" > docs/frecklesmusic-lighthouse-metrics.json
 
           # Валидация JSON
-          if ! jq empty docs/lighthouse-metrics.json 2>/dev/null; then
+          if ! jq empty docs/frecklesmusic-lighthouse-metrics.json 2>/dev/null; then
             echo "::error::Invalid JSON generated!"
             echo "Содержимое файла:"
-            cat docs/lighthouse-metrics.json
+            cat docs/frecklesmusic-lighthouse-metrics.json
             exit 1
           fi
 
@@ -74,7 +74,7 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           script: |
             const fs = require('fs');
-            const metrics = JSON.parse(fs.readFileSync('docs/lighthouse-metrics.json'));
+            const metrics = JSON.parse(fs.readFileSync('docs/frecklesmusic-lighthouse-metrics.json'));
             
             try {
               // Получаем текущий Gist
@@ -83,7 +83,7 @@ jobs:
               });
               
               // Парсим существующие данные
-              const existingContent = gist.data.files['lighthouse-metrics.json']?.content;
+              const existingContent = gist.data.files['frecklesmusic-lighthouse-metrics.json']?.content;
               const existingMetrics = existingContent ? JSON.parse(existingContent) : null;
               
               // Сравниваем метрики (игнорируя timestamp)
@@ -108,10 +108,10 @@ jobs:
               await github.rest.gists.update({
                 gist_id: process.env.GIST_ID,
                 files: {
-                  'lighthouse-metrics.json': {
+                  'frecklesmusic-lighthouse-metrics.json': {
                     content: JSON.stringify(metrics, null, 2)
                   },
-                  'lighthouse-badge.json': {
+                  'frecklesmusic-lighthouse-badge.json': {
                     content: JSON.stringify(badgeData, null, 2)
                   }
                 }
@@ -148,10 +148,10 @@ jobs:
                 description: 'Lighthouse Metrics',
                 public: true,
                 files: {
-                  'lighthouse-metrics.json': {
+                  'frecklesmusic-lighthouse-metrics.json': {
                     content: JSON.stringify(metrics, null, 2)
                   },
-                  'lighthouse-badge.json': {
+                  'frecklesmusic-lighthouse-badge.json': {
                     content: JSON.stringify(badgeData, null, 2)
                   }
                 }
