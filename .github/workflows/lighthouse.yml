@@ -136,10 +136,10 @@ jobs:
             }
             
             function getColor(performanceScore) {
-              if (score >= 90) return 'brightgreen';
-              if (score >= 80) return 'green';
-              if (score >= 60) return 'yellow';
-              if (score >= 40) return 'orange';
+              if (performanceScore >= 90) return 'brightgreen';
+              if (performanceScore >= 80) return 'green';
+              if (performanceScore >= 60) return 'yellow';
+              if (performanceScore >= 40) return 'orange';
               return 'red';
             }
             
