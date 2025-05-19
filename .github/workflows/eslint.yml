@@ -30,33 +30,65 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }} # сначала генерируем токен: https://github.com/settings/tokens, потом создаём переменную с токеном: https://github.com/fpsthirty/frecklesmusic/settings/secrets/actions
           script: |
-            // Получаем результат ESLint
-            const result = "${{ steps.eslint-check.outputs.result }}";
-            console.log(`ESLint result: ${result}`);
-
-            // Подготавливаем данные для Gist
-            const badgeData = {
-              schemaVersion: 1,
-              label: "ESLint",
-              message: result === 'success' ? "valid" : "invalid",
-              color: result === 'success' ? "brightgreen" : "red"
-            };
+            // Получаем текущий результат ESLint
+            const currentResult = "${{ steps.eslint-check.outputs.result }}";
+            const currentStatus = currentResult === 'success' ? 'valid' : 'invalid';
 
             try {
-              // Обновляем Gist
-              const response = await github.rest.gists.update({
+              // Получаем текущий Gist
+              const gist = await github.rest.gists.get({
+                gist_id: process.env.GIST_ID
+              });
+              
+              // Парсим существующие данные
+              const existingContent = gist.data.files['frecklesmusic-eslint-badge.json'].content;
+              const existingData = JSON.parse(existingContent);
+              
+              // Сравниваем статусы
+              console.log(`текущий статус: ${currentStatus}, изначальный статус: ${existingData.message}`);
+              if (existingData.message === currentStatus) {
+                console.log('Статус не изменился, пропускаем обновление Gist');
+                return;
+              }
+
+              // Подготавливаем новые данные
+              const newData = {
+                schemaVersion: 1,
+                label: "ESLint",
+                message: currentStatus,
+                color: currentResult === 'success' ? "brightgreen" : "red"
+              };
+
+              // Обновляем только если статус изменился
+              await github.rest.gists.update({
                 gist_id: process.env.GIST_ID,
                 files: {
                   'frecklesmusic-eslint-badge.json': {
-                    content: JSON.stringify(badgeData, null, 2)  // Красивое форматирование
+                    content: JSON.stringify(newData, null, 2)
                   }
                 }
               });
 
-              console.log('Gist успешно обновлен!');
-              console.log(`Статус: ${badgeData.message}`);
+              console.log('Gist обновлен (статус изменился)');
             } catch (error) {
-              console.error('Ошибка при обновлении Gist:');
-              console.error(error);
-              throw new Error('Не удалось обновить Gist');
+              // Если Gist не существует или другая ошибка
+              if (error.status === 404) {
+                console.log('Gist не найден, создаем новый');
+                await github.rest.gists.update({
+                  gist_id: process.env.GIST_ID,
+                  files: {
+                    'frecklesmusic-eslint-badge.json': {
+                      content: JSON.stringify({
+                        schemaVersion: 1,
+                        label: "ESLint",
+                        message: currentStatus,
+                        color: currentResult === 'success' ? "brightgreen" : "red"
+                      }, null, 2)
+                    }
+                  }
+                });
+              } else {
+                console.error('Ошибка при работе с Gist:', error);
+                throw error;
+              }
             }
