@@ -126,6 +126,7 @@ jobs:
                   filename,
                   { content: JSON.stringify(data, null, 2) }
                 ])
+              )
             });
 
       - name: Download Gist Files
