@@ -69,7 +69,7 @@ jobs:
         if: always()
         uses: actions/github-script@v6
         env:
-          GIST_ID: "7b7563c9fbf4e1164894f86ed4284c18"
+          GIST_ID: "YOUR_GIST_ID_HERE"
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
@@ -95,13 +95,19 @@ jobs:
                 return;
               }
               
-              // Подготавливаем данные для бейджа
+              // Формируем данные для бейджа
               const badgeData = {
                 schemaVersion: 1,
-                label: "Lighthouse",
-                message: `P${metrics.performance} A${metrics.accessibility} B${metrics.best_practices} S${metrics.seo}`,
+                label: "",
+                message: [
+                  `Perf: ${metrics.performance}`,
+                  `A11y: ${metrics.accessibility}`,
+                  `BP: ${metrics.best_practices}`,
+                  `SEO: ${metrics.seo}`
+                ].join(' | '),
                 color: getColor(metrics.performance),
-                cacheSeconds: 3600
+                namedLogo: "lighthouse",
+                style: "flat"
               };
               
               // Обновляем Gist
