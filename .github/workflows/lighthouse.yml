@@ -1,18 +1,14 @@
 name: Lighthouse Analyze
 on:
   push:
-    branches: [ main ]  # Запуск при push в main
-  pull_request:         # Или при создании PR
-  workflow_dispatch:    # Ручной запуск через UI
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
 jobs:
   lighthouse:
     runs-on: ubuntu-latest
     steps:
-      - name: Update Actions
-        run: |
-          echo "Список доступных версий:"
-          curl -s https://api.github.com/repos/actions/upload-artifact/tags | jq -r '.[].name'
-      
       - uses: actions/checkout@v4
       
       - name: Setup Node
@@ -25,117 +21,136 @@ jobs:
       
       - name: Install jq
         run: sudo apt-get install -y jq
-      
-      - name: Prepare to Save Score to Pages
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git pull
 
       - name: Run Lighthouse CI
         id: run-lhci
         run: |
-          # Запускаем Lighthouse и сохраняем логи в файл
           lhci autorun --config=./lighthouserc.json --save-assets 2>&1 | tee ./lighthouse-output.log || echo "::warning::Lighthouse run completed"
-        
         env:
           LHCI_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract Lighthouse Hash
-        id: lh-hash
-        run: |
-          # Читаем лог из файла и ищем URL
-          REPORT_URL=$(grep -o 'https://storage\.googleapis\.com/lighthouse-infrastructure\.appspot\.com/reports/[0-9-]\+\.report\.html' ./lighthouse-output.log || true)
-          
-          if [ -n "$REPORT_URL" ]; then
-            # Извлекаем хеш из URL
-            HASH=$(echo "$REPORT_URL" | sed 's|.*/reports/\([0-9-]*\)\.report\.html|\1|')
-            echo "hash=${HASH}" >> $GITHUB_OUTPUT
-            echo "Extracted Lighthouse hash: ${HASH}"
-            
-            # Дополнительно сохраняем хеш в файл
-            echo "${HASH}" > ./lighthouse-hash.txt
-          else
-            echo "::error::Failed to extract Lighthouse report URL!"
-            echo "hash=error" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Prepare Lighthouse Artifacts
-        run: |
-          mkdir -p lighthouse-artifacts
-          # Копируем ВСЕ возможные файлы отчётов
-          cp -a .lighthouseci/ lighthouse-artifacts/ 2>/dev/null || true
-          # Сохраняем хеш отдельно
-          echo "${{ steps.lh-hash.outputs.hash }}" > lighthouse-artifacts/latest-hash.txt
-
-      - name: Upload Permanent Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: lighthouse-report-${{ github.run_id }}
-          path: lighthouse-artifacts/
-          if-no-files-found: ignore
-
-      - name: Debug current files
-        run: |
-          echo "Содержимое .lighthouseci/:"
-          ls -la .lighthouseci/
-          echo "Содержимое lhci_reports/:"
-          ls -la lhci_reports/ || echo "Папка не существует"
-          echo "Содержимое docs/:"
-          ls -la docs/
-          echo "Текущий score:"
-          cat docs/lighthouse-score.json || echo "Файл не найден"
-
-      - name: Upload to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.lighthouseci/'
-
       - name: Extract Lighthouse Metrics
+        id: extract-metrics
         run: |
           mkdir -p docs
           
-          # Проверяем, что отчёт существует
           if [ ! -f .lighthouseci/lhr-*.json ]; then
             echo "::error::No Lighthouse report found!"
             exit 1
           fi
           
-          # Извлекаем метрики с проверкой ошибок
           REPORT=$(ls -t .lighthouseci/lhr-*.json | head -1)
           echo "{
             \"performance\": $(jq -r '.categories.performance.score * 100 | floor' "$REPORT"),
             \"accessibility\": $(jq -r '.categories.accessibility.score * 100 | floor' "$REPORT"),
-            \"best_practices\": $(jq -r '.categories["best-practices"].score * 100 | floor' "$REPORT"),
-            \"seo\": $(jq -r '.categories.seo.score * 100 | floor' "$REPORT")
-          }" > docs/lighthouse-score.json
+            \"best_practices\": $(jq -r '.categories[\"best-practices\"].score * 100 | floor' "$REPORT"),
+            \"seo\": $(jq -r '.categories.seo.score * 100 | floor' "$REPORT"),
+            \"timestamp\": \"$(date -u +'%Y-%m-%dT%H:%M:%SZ')\"
+          }" > docs/lighthouse-metrics.json
           
-          # Дополнительная проверка файла
-          if ! jq empty docs/lighthouse-score.json 2>/dev/null; then
+          if ! jq empty docs/lighthouse-metrics.json 2>/dev/null; then
             echo "::error::Invalid JSON generated!"
-            echo "{\"error\":\"invalid_data\"}" > docs/lighthouse-score.json
-          fi
-      - name: Validate JSON
-        run: |
-          echo "Проверяем файл метрик:"
-          cat docs/lighthouse-score.json
-          if ! jq empty docs/lighthouse-score.json; then
-            echo "::error::Invalid JSON file!"
             exit 1
           fi
-      - name: Save Score to Pages
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add docs/lighthouse-score.json
-          git commit -m "Update Lighthouse score $(Get-Date -Format 'dd-MM-yy HH:mm')" || echo "No changes"
-          git push
-        if: success()
-      - name: Debug score after updating
-        run: |
-          echo "Обновлённый score:"
-          cat docs/lighthouse-score.json || echo "Файл не найден"
-      - name: Generate Badge Text
-        run: |
-          SCORES=$(jq -r '"Perf: \(.performance)% | A11Y: \(.accessibility)% | BP: \(.best_practices)% | SEO: \(.seo)%"' docs/lighthouse-score.json)
-          echo "BADGE_TEXT=${SCORES}" >> $GITHUB_ENV
+
+      - name: Update Lighthouse Badge in Gist
+        if: always()
+        uses: actions/github-script@v6
+        env:
+          GIST_ID: "7b7563c9fbf4e1164894f86ed4284c18"
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const fs = require('fs');
+            const metrics = JSON.parse(fs.readFileSync('docs/lighthouse-metrics.json'));
+            
+            try {
+              // Получаем текущий Gist
+              const gist = await github.rest.gists.get({
+                gist_id: process.env.GIST_ID
+              });
+              
+              // Парсим существующие данные
+              const existingContent = gist.data.files['lighthouse-metrics.json']?.content;
+              const existingMetrics = existingContent ? JSON.parse(existingContent) : null;
+              
+              // Сравниваем метрики (игнорируя timestamp)
+              const {timestamp: _, ...currentMetrics} = metrics;
+              const {timestamp: __, ...oldMetrics} = existingMetrics || {};
+              
+              if (existingMetrics && JSON.stringify(oldMetrics) === JSON.stringify(currentMetrics)) {
+                console.log('Метрики не изменились, пропускаем обновление Gist');
+                return;
+              }
+              
+              // Подготавливаем данные для бейджа
+              const badgeData = {
+                schemaVersion: 1,
+                label: "Lighthouse",
+                message: `P${metrics.performance} A${metrics.accessibility} B${metrics.best_practices} S${metrics.seo}`,
+                color: getColor(metrics.performance),
+                cacheSeconds: 3600
+              };
+              
+              // Обновляем Gist
+              await github.rest.gists.update({
+                gist_id: process.env.GIST_ID,
+                files: {
+                  'lighthouse-metrics.json': {
+                    content: JSON.stringify(metrics, null, 2)
+                  },
+                  'lighthouse-badge.json': {
+                    content: JSON.stringify(badgeData, null, 2)
+                  }
+                }
+              });
+              
+              console.log('Gist успешно обновлен!');
+              
+            } catch (error) {
+              if (error.status === 404) {
+                console.log('Gist не найден, создаем новый');
+                await createNewGist();
+              } else {
+                console.error('Ошибка при обновлении Gist:', error);
+                throw error;
+              }
+            }
+            
+            function getColor(performanceScore) {
+              if (performanceScore >= 90) return 'brightgreen';
+              if (performanceScore >= 50) return 'yellow';
+              return 'red';
+            }
+            
+            async function createNewGist() {
+              const {performance, accessibility, best_practices, seo} = metrics;
+              const badgeData = {
+                schemaVersion: 1,
+                label: "Lighthouse",
+                message: `P${performance} A${accessibility} B${best_practices} S${seo}`,
+                color: getColor(performance)
+              };
+              
+              await github.rest.gists.create({
+                description: 'Lighthouse Metrics',
+                public: true,
+                files: {
+                  'lighthouse-metrics.json': {
+                    content: JSON.stringify(metrics, null, 2)
+                  },
+                  'lighthouse-badge.json': {
+                    content: JSON.stringify(badgeData, null, 2)
+                  }
+                }
+              });
+            }
+
+      - name: Upload Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-report-${{ github.run_id }}
+          path: |
+            .lighthouseci/
+            docs/lighthouse-metrics.json
+          if-no-files-found: warn
