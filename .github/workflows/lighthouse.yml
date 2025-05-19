@@ -73,98 +73,65 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
-            const fs = require('fs');
-            const metrics = JSON.parse(fs.readFileSync('docs/frecklesmusic-lighthouse-metrics.json'));
+            // Функция для определения цвета
+            const getColor = (score) => {
+              if (score >= 90) return 'brightgreen';
+              if (score >= 80) return 'green';
+              if (score >= 60) return 'yellow';
+              if (score >= 40) return 'orange';
+              return 'red';
+            };
             
-            try {
-              // Получаем текущий Gist
-              const gist = await github.rest.gists.get({
-                gist_id: process.env.GIST_ID
-              });
-              
-              // Парсим существующие данные
-              const existingContent = gist.data.files['frecklesmusic-lighthouse-metrics.json']?.content;
-              const existingMetrics = existingContent ? JSON.parse(existingContent) : null;
-              
-              // Сравниваем метрики (игнорируя timestamp)
-              const {timestamp: _, ...currentMetrics} = metrics;
-              const {timestamp: __, ...oldMetrics} = existingMetrics || {};
-              
-              if (existingMetrics && JSON.stringify(oldMetrics) === JSON.stringify(currentMetrics)) {
-                console.log('Метрики не изменились, пропускаем обновление Gist');
-                return;
-              }
-              
-              // Формируем данные для бейджа
-              const badgeData = {
+            // Создаем отдельные бейджи для каждой метрики
+            const badges = {
+              'frecklesmusic-lighthouse-perf.json': {
                 schemaVersion: 1,
-                label: "",
-                message: [
-                  `performance: ${metrics.performance}`,
-                  `accessibility: ${metrics.accessibility}`,
-                  `best practices: ${metrics.best_practices}`,
-                  `SEO: ${metrics.seo}`
-                ].join(' | '),
+                label: "Performance",
+                message: `${metrics.performance}`,
                 color: getColor(metrics.performance),
                 namedLogo: "lighthouse",
                 style: "flat"
-              };
-              
-              // Обновляем Gist
-              await github.rest.gists.update({
-                gist_id: process.env.GIST_ID,
-                files: {
-                  'frecklesmusic-lighthouse-metrics.json': {
-                    content: JSON.stringify(metrics, null, 2)
-                  },
-                  'frecklesmusic-lighthouse-badge.json': {
-                    content: JSON.stringify(badgeData, null, 2)
-                  }
-                }
-              });
-              
-              console.log('Gist успешно обновлен!');
-              
-            } catch (error) {
-              if (error.status === 404) {
-                console.log('Gist не найден, создаем новый');
-                await createNewGist();
-              } else {
-                console.error('Ошибка при обновлении Gist:', error);
-                throw error;
-              }
-            }
-            
-            function getColor(performanceScore) {
-              if (performanceScore >= 90) return 'brightgreen';
-              if (performanceScore >= 80) return 'green';
-              if (performanceScore >= 60) return 'yellow';
-              if (performanceScore >= 40) return 'orange';
-              return 'red';
-            }
-            
-            async function createNewGist() {
-              const {performance, accessibility, best_practices, seo} = metrics;
-              const badgeData = {
+              },
+              'frecklesmusic-lighthouse-a11y.json': {
                 schemaVersion: 1,
-                label: "Lighthouse",
-                message: `P${performance} A${accessibility} B${best_practices} S${seo}`,
-                color: getColor(performance)
-              };
-              
-              await github.rest.gists.create({
-                description: 'Lighthouse Metrics',
-                public: true,
-                files: {
-                  'frecklesmusic-lighthouse-metrics.json': {
-                    content: JSON.stringify(metrics, null, 2)
-                  },
-                  'frecklesmusic-lighthouse-badge.json': {
-                    content: JSON.stringify(badgeData, null, 2)
-                  }
-                }
-              });
-            }
+                label: "Accessibility",
+                message: `${metrics.accessibility}`,
+                color: getColor(metrics.accessibility),
+                namedLogo: "a11y",
+                style: "flat"
+              },
+              'frecklesmusic-lighthouse-bp.json': {
+                schemaVersion: 1,
+                label: "Best Practices",
+                message: `${metrics.best_practices}`,
+                color: getColor(metrics.best_practices),
+                namedLogo: "bestpractices",
+                style: "flat"
+              },
+              'frecklesmusic-lighthouse-seo.json': {
+                schemaVersion: 1,
+                label: "SEO",
+                message: `${metrics.seo}`,
+                color: getColor(metrics.seo),
+                namedLogo: "seo",
+                style: "flat"
+              }
+            };
+            
+            // Обновляем Gist
+            await github.rest.gists.update({
+              gist_id: process.env.GIST_ID,
+              files: Object.fromEntries(
+                Object.entries(badges).map(([filename, data]) => [
+                  filename,
+                  { content: JSON.stringify(data, null, 2) }
+                ])
+            });
+
+      - name: Download Gist Files
+        run: |
+          curl -s -o lighthouse-gist-badge.json "https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-badge.json"
+          curl -s -o lighthouse-gist-metrics.json "https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-metrics.json"
 
       - name: Upload Reports
         uses: actions/upload-artifact@v4
@@ -172,5 +139,6 @@ jobs:
           name: lighthouse-report-${{ github.run_id }}
           path: |
             .lighthouseci/
-            docs/lighthouse-metrics.json
+            lighthouse-gist-badge.json
+            lighthouse-gist-metrics.json
           if-no-files-found: warn

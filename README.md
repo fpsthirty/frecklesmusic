@@ -7,6 +7,9 @@
 
 ### Code Quality
 <!-- Эти бейджи обновляются автоматически при пуше коммита, не редактировать вручную -->
-[![Lighthouse](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-badge.json&logo=lighthouse&style=flat)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/lighthouse.yml)
+[![Performance](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-perf.json&logo=lighthouse&style=flat)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/lighthouse.yml)
+[![Accessibility](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-a11y.json&logo=a11y&style=flat)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/lighthouse.yml)
+[![Best Practices](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-bp.json&logo=google-chrome&style=flat)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/lighthouse.yml)
+[![SEO](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fpsthirty/7b7563c9fbf4e1164894f86ed4284c18/raw/frecklesmusic-lighthouse-seo.json&logo=google&style=flat)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/lighthouse.yml)
 [![W3C Validation](https://img.shields.io/badge/W3C-Valid-green?logo=w3c)](https://validator.w3.org/nu/?doc=https%3A%2F%2Ffpsthirty.github.io%2Ffrecklesmusic%2F)
 [![ESLint](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/fpsthirty/6d9dd6bdaeecff45b56e0baee799ed2e/raw/frecklesmusic-eslint-badge.json)](https://github.com/fpsthirty/frecklesmusic/actions/workflows/eslint.yml)
