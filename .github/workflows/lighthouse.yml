@@ -73,6 +73,9 @@ jobs:
         with:
           github-token: ${{ secrets.GH_PAT }}
           script: |
+            const fs = require('fs');
+            const metrics = JSON.parse(fs.readFileSync('docs/frecklesmusic-lighthouse-metrics.json'));
+
             // Функция для определения цвета
             const getColor = (score) => {
               if (score >= 90) return 'brightgreen';
