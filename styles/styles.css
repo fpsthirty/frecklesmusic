@@ -473,6 +473,11 @@ footer.light-theme .icon-github img {
   position: relative;
   top: 50%;
 }
+
+#commit-info {
+  display: none;
+}
+
 /* -----------------
  @media-запросы
 ----------------- */

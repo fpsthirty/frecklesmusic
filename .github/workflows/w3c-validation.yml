@@ -8,6 +8,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Verify commit match
+        run: |
+          CURRENT_COMMIT=$(curl -sI https://fpsthirty.github.io/frecklesmusic/ | grep -i 'X-Git-Commit-ID:' | awk '{print $2}' | tr -d '\r')
+          if [ "$CURRENT_COMMIT" != "${{ inputs.expected_commit }}" ]; then
+            echo "::error::Commit mismatch! Current: ${CURRENT_COMMIT:-none}, Expected: ${{ inputs.expected_commit }}"
+            exit 1
+          fi
+    
       - name: Validate via API
         id: w3c-validate
         run: |
