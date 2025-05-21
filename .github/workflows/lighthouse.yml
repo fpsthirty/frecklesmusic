@@ -1,9 +1,6 @@
 name: Lighthouse Analyze
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-  workflow_dispatch:
+  workflow_dispatch:  # Только ручной или API-вызов (через wait-after-deploy.yml)
 
 jobs:
   lighthouse:
