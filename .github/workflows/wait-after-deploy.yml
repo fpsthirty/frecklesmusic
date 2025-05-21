@@ -17,13 +17,6 @@ jobs:
         id: get_sha
         run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
-      - name: Save commit info
-        run: |
-          echo '{
-            "commit": "${{ steps.get_sha.outputs.sha }}",
-            "date": "'$(date -u +'%Y-%m-%d %H:%M')'"
-          }' > data/commit-info.json
-          
       - name: Trigger W3C Validation
         uses: actions/github-script@v6
         with:
