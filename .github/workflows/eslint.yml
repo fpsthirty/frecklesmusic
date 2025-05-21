@@ -56,7 +56,7 @@ jobs:
                 schemaVersion: 1,
                 label: "ESLint",
                 message: currentStatus,
-                color: currentResult === 'success' ? "brightgreen" : "red"
+                color: currentResult === 'success' ? "green" : "red"
               };
 
               // Обновляем только если статус изменился
@@ -82,7 +82,7 @@ jobs:
                         schemaVersion: 1,
                         label: "ESLint",
                         message: currentStatus,
-                        color: currentResult === 'success' ? "brightgreen" : "red"
+                        color: currentResult === 'success' ? "green" : "red"
                       }, null, 2)
                     }
                   }

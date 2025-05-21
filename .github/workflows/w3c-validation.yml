@@ -40,7 +40,7 @@ jobs:
           github-token: ${{ secrets.GH_PAT }}
           script: |
             const status = "${{ steps.w3c-validate.outputs.status }}" || 'unknown';
-            const color = status === 'valid' ? 'brightgreen' : 'red';
+            const color = status === 'valid' ? 'green' : 'red';
             
             try {
               await github.rest.gists.update({
