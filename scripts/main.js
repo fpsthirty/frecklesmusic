@@ -1,6 +1,6 @@
 // вывод id коммита в html для определения актуальности контента на сайте
 // для CI-сборки: выгрузка из JSON-файла
-fetch('data/commit-info.json')
+/*fetch('data/commit-info.json')
   .then(response => response.json())
   .then(data => {
     document.getElementById('commit-info').innerHTML = `
@@ -17,3 +17,11 @@ fetch('data/commit-info.json')
       })
       .catch(e => console.error('Не удалось получить commit SHA:', e));
   });
+  */
+
+const commitHash = require('fs').readFileSync('version.json', 'utf-8');
+
+app.use((req, res, next) => {
+  res.setHeader('X-Git-Commit', commitHash);
+  next();
+});
