@@ -5,97 +5,43 @@ on:
     types: [completed]
 
 jobs:
-  verify-and-trigger:
+  wait:
     runs-on: ubuntu-latest
     steps:
-      - name: Get commit hash
-        id: get-commit
-        run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-
-      - name: Create version.log
+      - name: Wait for site propagation
         run: |
-          echo $COMMIT_HASH > version.log
-          cat version.log
+          echo "Ожидаем 120 секунд после деплоя..." // для применения сборки на фронте
+          sleep 120
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Полная история коммитов
-
-      - name: Get expected commit SHA
+      - name: Get commit SHA
         id: get_sha
-        run: |
-          echo "sha_short=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-          echo "sha_full=${GITHUB_SHA}" >> $GITHUB_OUTPUT
-
-      - name: Wait for commit propagation
-        id: wait_propagation
-        run: |
-          echo "Ожидаем применение коммита ${{ steps.get_sha.outputs.sha_short }}..."
-          
-          # Параметры ожидания (10 минут = 40 попыток * 15 секунд)
-          ATTEMPTS=40
-          INTERVAL=15
-          SITE_URL="https://fpsthirty.github.io/frecklesmusic/"
-          
-          for ((i=1; i<=$ATTEMPTS; i++)); do
-            echo "Попытка $i/$ATTEMPTS..."
-            
-            # Получаем текущий коммит из заголовков сайта
-            CURRENT_COMMIT=$(curl -sI "$SITE_URL" | grep -i 'X-Git-Commit-ID:' | awk '{print $2}' | tr -d '\r')
-            
-            if [ "$CURRENT_COMMIT" == "${{ steps.get_sha.outputs.sha_full }}" ]; then
-              echo "Сайт обновлен! Актуальный коммит: $CURRENT_COMMIT"
-              echo "success=true" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-            
-            echo "Текущий коммит на сайте: ${CURRENT_COMMIT:-none}, ожидаем ${{ steps.get_sha.outputs.sha_short}}"
-            sleep $INTERVAL
-          done
-          
-          echo "::error::Timeout: сайт не обновился за $((ATTEMPTS*INTERVAL/60)) минут"
-          echo "success=false" >> $GITHUB_OUTPUT
-          exit 1
+        run: echo "sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
       - name: Save commit info
-        if: steps.wait_propagation.outputs.success == 'true'
         run: |
-          mkdir -p data
           echo '{
-            "commit": "${{ steps.get_sha.outputs.sha_short }}",
-            "date": "'$(date -u +'%Y-%m-%d %H:%M')'",
-            "url": "https://github.com/fpsthirty/frecklesmusic/commit/${{ steps.get_sha.outputs.sha_full }}"
+            "commit": "${{ steps.get_sha.outputs.sha }}",
+            "date": "'$(date -u +'%Y-%m-%d %H:%M')'"
           }' > data/commit-info.json
-
-      - name: Trigger validations
-        if: steps.wait_propagation.outputs.success == 'true'
+          
+      - name: Trigger W3C Validation
         uses: actions/github-script@v6
         with:
           script: |
-            try {
-              await Promise.all([
-                github.rest.actions.createWorkflowDispatch({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  workflow_id: 'w3c-validation.yml',
-                  ref: context.ref,
-                  inputs: {
-                    expected_commit: '${{ steps.get_sha.outputs.sha_full }}'
-                  }
-                }),
-                github.rest.actions.createWorkflowDispatch({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  workflow_id: 'lighthouse.yml',
-                  ref: context.ref,
-                  inputs: {
-                    expected_commit: '${{ steps.get_sha.outputs.sha_full }}'
-                  }
-                })
-              ]);
-              console.log('Успешно запущены валидации');
-            } catch (error) {
-              console.error('Ошибка при запуске валидаций:', error);
-              core.setFailed('Failed to trigger validations');
-            }
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'w3c-validation.yml',
+              ref: context.ref
+            });
+
+      - name: Trigger Lighthouse Validation
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'lighthouse.yml',
+              ref: context.ref
+            });
