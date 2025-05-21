@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Inject commit ID
         run: |
-          echo "window.COMMIT_ID = '${{ github.sha }}';" >> _commit.js
+          echo "window.COMMIT_ID = '${{ github.sha }}';" >> commit_head.js
 
       - name: Checkout code
         uses: actions/checkout@v4
