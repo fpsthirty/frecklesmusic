@@ -45,7 +45,7 @@ jobs:
               await github.rest.gists.update({
                 gist_id: process.env.GIST_ID,
                 files: {
-                  'w3c-validation.json': {
+                  'frecklesmusic-w3c-validation.json': {
                     content: JSON.stringify({
                       schemaVersion: 1,
                       label: "W3C",
