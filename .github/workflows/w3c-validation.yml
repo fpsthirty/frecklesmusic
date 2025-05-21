@@ -17,6 +17,11 @@ jobs:
           # Выполняем валидацию и сохраняем результат
           curl -s "https://validator.w3.org/nu/?out=json&doc=https://fpsthirty.github.io/frecklesmusic/" > docs/w3c-results.json
           
+          echo "=== w3c results ==="
+          jq '.' docs/w3c-results.json || cat docs/w3c-results.json
+          echo "                   "
+          echo "==================="
+
           # Проверяем наличие ошибок
           if jq -e '.messages[] | select(.type == "error")' docs/w3c-results.json >/dev/null; then
             echo "::error::W3C validation failed"
