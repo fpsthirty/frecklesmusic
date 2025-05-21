@@ -1,0 +1,25 @@
+name: Wait After Deploy
+on:
+  workflow_run:
+    workflows: ["pages-build-deployment"]
+    types: [completed]
+
+jobs:
+  wait:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for site propagation
+        run: |
+          echo "Ожидаем 120 секунд после деплоя..."
+          sleep 120
+          
+      - name: Trigger W3C Validation
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'w3c-validation.yml',
+              ref: context.ref
+            });

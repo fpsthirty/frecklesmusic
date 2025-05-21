@@ -1,17 +1,13 @@
-name: W3C Analyze
-on: [push]
+name: W3C Validation
+on:
+  workflow_dispatch:  # Только ручной или API-вызов (через wait-after-deploy.yml)
 
 jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-      
+
       - name: Validate via API
         id: w3c-validate
         run: |
