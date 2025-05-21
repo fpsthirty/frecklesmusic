@@ -8,6 +8,10 @@ jobs:
   verify-and-trigger:
     runs-on: ubuntu-latest
     steps:
+      - name: Inject commit ID
+      run: |
+        echo "window.COMMIT_ID = '${{ github.sha }}';" >> docs/_commit.js
+        
       - name: Checkout code
         uses: actions/checkout@v4
         with:
