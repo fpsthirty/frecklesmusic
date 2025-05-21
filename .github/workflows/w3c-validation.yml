@@ -13,9 +13,74 @@ jobs:
           node-version: 20
       
       - name: Validate via API
+        id: w3c-validate
         run: |
+          # Создаем папку, если не существует
+          mkdir -p docs
+          
+          # Выполняем валидацию и сохраняем результат
           curl -s "https://validator.w3.org/nu/?out=json&doc=https://fpsthirty.github.io/frecklesmusic/" > docs/w3c-results.json
-          jq -e '.messages[] | select(.type == "error")' docs/w3c-results.json && exit 1 || exit 0
+          
+          # Проверяем наличие ошибок
+          if jq -e '.messages[] | select(.type == "error")' docs/w3c-results.json >/dev/null; then
+            echo "::error::W3C validation failed"
+            echo "status=invalid" >> $GITHUB_OUTPUT
+            exit 1
+          else
+            echo "status=valid" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Update W3C Badge in Gist
+        if: always()
+        uses: actions/github-script@v6
+        env:
+          GIST_ID: "c8eaae627c906be34b07d7f359293daa"  # frecklesmusic-w3c.json GIST
+        with:
+          github-token: ${{ secrets.GH_PAT }}
+          script: |
+            const status = "${{ steps.w3c-validate.outputs.status }}" || 'unknown';
+            const color = status === 'valid' ? 'brightgreen' : 'red';
+            
+            try {
+              await github.rest.gists.update({
+                gist_id: process.env.GIST_ID,
+                files: {
+                  'w3c-validation.json': {
+                    content: JSON.stringify({
+                      schemaVersion: 1,
+                      label: "W3C",
+                      message: status,
+                      color: color,
+                      namedLogo: "w3c",
+                      style: "flat",
+                      cacheSeconds: 3600
+                    }, null, 2)
+                  }
+                }
+              });
+              console.log(`W3C validation status updated: ${status}`);
+            } catch (error) {
+              console.error('Error updating Gist:', error);
+              // Создаем новый Gist если не существует
+              if (error.status === 404) {
+                await github.rest.gists.create({
+                  description: 'W3C Validation Status',
+                  public: true,
+                  files: {
+                    'w3c-validation.json': {
+                      content: JSON.stringify({
+                        schemaVersion: 1,
+                        label: "W3C",
+                        message: status,
+                        color: color,
+                        namedLogo: "w3c",
+                        style: "flat"
+                      })
+                    }
+                  }
+                });
+              }
+            }
       
       - name: Upload Results
         uses: actions/upload-artifact@v4
