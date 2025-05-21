@@ -19,7 +19,12 @@
   });
   */
 
-const commitHash = require('fs').readFileSync('version.json', 'utf-8');
+/* eslint-env node */
+const fs = require('fs');
+const express = require('express');
+
+const app = express(); // Инициализация app, если ещё не сделано
+const commitHash = fs.readFileSync('version.log', 'utf-8').trim();
 
 app.use((req, res, next) => {
   res.setHeader('X-Git-Commit', commitHash);

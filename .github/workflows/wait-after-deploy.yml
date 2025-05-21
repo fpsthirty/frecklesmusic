@@ -9,10 +9,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get commit hash
+        id: get-commit
         run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Create version file
-        run: echo "{\"commit\": \"${{ env.COMMIT_HASH }}\"}" > version.json
+      - name: Create version.log
+        run: |
+          echo $COMMIT_HASH > version.log
+          cat version.log
 
       - name: Checkout code
         uses: actions/checkout@v4
