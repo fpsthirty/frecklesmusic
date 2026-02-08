@@ -72,6 +72,12 @@
     "command": "!tea/чай 🍿"
   },
   {
+    "command": "!corntea 🍿"
+  },
+  {
+    "command": "!cornaction 🍿"
+  },
+  {
     "command": "!wine/cheers/тост/таверна ⚔️"
   },
     {
