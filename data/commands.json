@@ -68,6 +68,15 @@
   {
     "command": "!cornrain/корн 📽️"
   },
+    {
+    "command": "!wine/cheers/тост/таверна 📽️"
+  },
+    {
+    "command": "!hairstyle 📽️"
+  },
+  {
+    "command": "!gvint/!гвинт 📽️"
+  },
   {
     "command": "!clap 👏"
   },
