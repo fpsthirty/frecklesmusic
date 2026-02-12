@@ -84,7 +84,10 @@
     "command": "!hairstyle ⚔️"
   },
   {
-    "command": "!gvint/!гвинт ⚔️"
+    "command": "!gvint/гвинт ⚔️"
+  },
+  {
+    "command": "!love/любовь ⚔️"
   },
   {
     "command": "!clap 👏"
